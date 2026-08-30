@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Hosting Server</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #edf2f7; margin: 0; color: #1a202c; }
+        .header { background-color: #1a365d; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; font-size: 22px; }
+        .header a { color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 4px; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        
+        .user-card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; border-left: 5px solid #3182ce; }
+        .user-card.banned { border-left-color: #e53e3e; opacity: 0.7; }
+        
+        .user-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px; }
+        .user-header h2 { margin: 0; color: #2b6cb0; }
+        
+        .btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 13px; color: white; }
+        .btn-danger { background-color: #e53e3e; }
+        .btn-danger:hover { background-color: #c53030; }
+        .btn-primary { background-color: #3182ce; text-decoration: none; }
+        .btn-warning { background-color: #dd6b20; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { text-align: left; padding: 10px; border-bottom: 1px solid #e2e8f0; }
+        th { background: #f7fafc; color: #4a5568; }
+        
+        .badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .badge-live { background: #c6f6d5; color: #22543d; }
+        .badge-offline { background: #fed7d7; color: #742a2a; }
+        
+        /* Replace modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 8px; width: 400px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input[type="file"] { width: 100%; padding: 8px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Admin Control Panel</h1>
+        <div>
+            <a href="/dashboard.html">My Dashboard</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </div>
+
+    <div class="container" id="users-container">
+        <h2>Loading users...</h2>
+    </div>
+
+    <!-- Replace Project Modal -->
+    <div class="modal" id="replaceModal">
+        <div class="modal-content">
+            <h3 style="margin-top:0">Replace Project</h3>
+            <p>Target: <strong id="replaceTargetName"></strong></p>
+            <form action="/api/admin/replace" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="siteName" id="replaceSiteNameInput">
+                <div class="form-group">
+                    <label>Upload New File (.zip or .html)</label>
+                    <input type="file" name="siteFile" required accept=".html,.htm,.zip">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn" style="background:#a0aec0; color:white;" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Replace Project</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        fetch('/api/admin/all')
+            .then(res => res.json())
+            .then(data => {
+                const container = document.getElementById('users-container');
+                container.innerHTML = '';
+                
+                const users = data.users;
+                
+                for (const username in users) {
+                    const user = users[username];
+                    const card = document.createElement('div');
+                    card.className = 'user-card' + (user.banned ? ' banned' : '');
+                    
+                    let tableHTML = '';
+                    if (user.projectsStatus.length > 0) {
+                        tableHTML = `
+                            <table>
+                                <tr><th>Project URL</th><th>Status</th><th>Actions</th></tr>
+                                ${user.projectsStatus.map(p => `
+                                    <tr>
+                                        <td><strong>${p.name}</strong></td>
+                                        <td><span class="badge ${p.live ? 'badge-live' : 'badge-offline'}">${p.live ? 'Live' : 'Offline'}</span></td>
+                                        <td>
+                                            <a href="/${p.name}" target="_blank" class="btn btn-primary" style="margin-right:5px">Visit</a>
+                                            <button class="btn btn-warning" onclick="openReplaceModal('${p.name}')" style="margin-right:5px">Replace</button>
+                                            <button class="btn btn-danger" onclick="deleteProject('${p.name}', '${username}')">Delete</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                        `;
+                    } else {
+                        tableHTML = '<p style="color: #718096; font-size: 14px;">No projects uploaded.</p>';
+                    }
+
+                    let banBtn = '';
+                    if (!user.banned && username !== 'devyasin') {
+                        banBtn = `<button class="btn btn-danger" onclick="banUser('${username}')">Ban User & Delete All Projects</button>`;
+                    } else if (user.banned) {
+                        banBtn = `<span style="color: #e53e3e; font-weight: bold;">[BANNED]</span>`;
+                    } else {
+                        banBtn = `<span style="color: #3182ce; font-weight: bold;">[Admin Account]</span>`;
+                    }
+
+                    card.innerHTML = `
+                        <div class="user-header">
+                            <h2>User: @${username}</h2>
+                            ${banBtn}
+                        </div>
+                        ${tableHTML}
+                    `;
+                    
+                    // Put devyasin at top, then normal users, then banned users
+                    if (username === 'devyasin') {
+                        container.insertBefore(card, container.firstChild);
+                    } else {
+                        container.appendChild(card);
+                    }
+                }
+            });
+
+        function banUser(username) {
+            if (confirm(`Are you sure you want to permanently BAN @${username}? This will delete all their projects immediately.`)) {
+                fetch('/api/admin/ban', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ targetUsername: username })
+                }).then(res => res.json()).then(data => {
+                    if (data.success) window.location.reload();
+                }).catch(err => alert('Failed to ban user.'));
+            }
+        }
+
+        function deleteProject(siteName, ownerName) {
+            if (confirm(`Delete project "${siteName}" belonging to @${ownerName}?`)) {
+                fetch('/api/admin/delete-project', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ siteName, ownerName })
+                }).then(res => res.json()).then(data => {
+                    if (data.success) window.location.reload();
+                });
+            }
+        }
+
+        function openReplaceModal(siteName) {
+            document.getElementById('replaceModal').style.display = 'flex';
+            document.getElementById('replaceTargetName').innerText = siteName;
+            document.getElementById('replaceSiteNameInput').value = siteName;
+        }
+
+        function closeModal() {
+            document.getElementById('replaceModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
