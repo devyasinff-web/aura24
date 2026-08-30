@@ -14,7 +14,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Security Middlewares
-app.use(cors({ origin: '*' })); // Allow external HTML forms from subscribers
+app.set('trust proxy', 1);
+app.use(cors({
+    origin: function(origin, callback) { return callback(null, true); },
+    credentials: true
+})); // Allow external HTML forms from subscribers with cookies
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -32,7 +36,9 @@ app.use(cookieParser());
 app.use(cookieSession({
     name: 'session',
     keys: ['render-hosting-secret-12345'],
-    maxAge: 24 * 60 * 60 * 1000 // default 24h, overridden in login
+    maxAge: 24 * 60 * 60 * 1000, // default 24h, overridden in login
+    sameSite: 'none',
+    secure: true
 }));
 
 // Setup directories
@@ -77,11 +83,11 @@ function pushToGitHub(commitMessage) {
 
 // Middlewares
 function requireAuth(req, res, next) {
-    if (!req.session.username) return res.redirect('/');
+    if (!req.session.username) return res.status(401).json({ error: 'Unauthorized' });
     const users = getUsers();
     if (users[req.session.username] && users[req.session.username].banned) {
         req.session = null;
-        return res.status(403).send('Your account has been banned.');
+        return res.status(403).json({ error: 'Your account has been banned.' });
     }
     next();
 }
@@ -111,7 +117,7 @@ app.post('/register', (req, res) => {
         req.sessionOptions.maxAge = false; // session only
     }
     req.session.username = username;
-    res.redirect('/dashboard.html');
+    res.json({ success: true, message: 'Registered successfully', username: username });
 });
 
 app.post('/login', (req, res) => {
@@ -130,17 +136,12 @@ app.post('/login', (req, res) => {
     }
     
     req.session.username = username;
-    res.redirect('/dashboard.html');
+    res.json({ success: true, message: 'Logged in successfully', username: username });
 });
 
 app.get('/logout', (req, res) => {
     req.session = null;
-    res.redirect('/');
-});
-
-// --- Protected Static Pages ---
-app.get('/dashboard.html', requireAuth, (req, res) => {
-    res.sendFile(path.join(__dirname, 'public/dashboard.html'));
+    res.json({ success: true, message: 'Logged out' });
 });
 
 // --- Admin Auth ---
@@ -340,7 +341,7 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
         }
         
         setTimeout(() => pushToGitHub(`Uploaded v${versionNum}.0 for ${siteName}`), 1000);
-        res.redirect('/dashboard.html?success=' + siteName);
+        res.json({ success: true, siteName: siteName });
     } catch (err) {
         console.error(err);
         res.status(500).send('Upload error.');
