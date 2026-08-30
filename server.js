@@ -126,6 +126,11 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 });
 
+// --- Protected Static Pages ---
+app.get('/dashboard.html', requireAuth, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/dashboard.html'));
+});
+
 // --- Admin Auth ---
 app.post('/api/admin/login', (req, res) => {
     const { password } = req.body;
