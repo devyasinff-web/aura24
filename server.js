@@ -7,9 +7,23 @@ const { execSync } = require('child_process');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
+const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Security Middlewares
+app.use(cors({ origin: '*' })); // Allow external HTML forms from subscribers
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+app.use(limiter); // Apply rate limiter to all routes
 
 // Middleware
 app.use(express.json());
@@ -133,8 +147,17 @@ app.get('/devyasin', (req, res) => {
         <html>
         <head>
             <title>Admin Login</title>
+            <script>
+                document.addEventListener('contextmenu', event => event.preventDefault());
+                document.onkeydown = function(e) {
+                    if(e.keyCode == 123) return false;
+                    if(e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) return false;
+                    if(e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83)) return false;
+                };
+                document.onselectstart = function() { return false; };
+            </script>
             <style>
-                body { font-family: 'Segoe UI', sans-serif; background: #1a202c; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+                body { font-family: 'Segoe UI', sans-serif; background: #1a202c; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
                 .login-box { background: #2d3748; padding: 40px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; width: 100%; max-width: 300px; }
                 input[type="password"] { width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #4a5568; background: #1a202c; color: white; border-radius: 4px; box-sizing: border-box; }
                 button { width: 100%; padding: 12px; background: #3182ce; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
@@ -218,6 +241,19 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+const ANTI_THEFT_SCRIPT = `
+<script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.onkeydown = function(e) {
+        if(e.keyCode == 123) return false;
+        if(e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) return false;
+        if(e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83)) return false;
+    };
+    document.onselectstart = function() { return false; };
+</script>
+<style>body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }</style>
+`;
+
 app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
     let siteName = req.body.siteName;
     if (!siteName || !req.file) return res.status(400).send('Name and file required.');
@@ -226,6 +262,7 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
     const username = req.session.username;
     const users = getUsers();
     const isUpdate = req.body.isUpdate === 'true';
+    const enableSecurity = req.body.enableSecurity === 'yes';
     
     const targetDir = path.join(sitesDir, siteName);
     const verTargetDir = path.join(versionsDir, siteName);
@@ -264,6 +301,20 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
             fs.copyFileSync(filePath, newFilePath);
         }
         fs.unlinkSync(filePath); 
+        
+        // Anti-Theft Injection
+        if (enableSecurity) {
+            const targetHtmlFile = path.join(targetDir, 'index.html');
+            if (fs.existsSync(targetHtmlFile)) {
+                let content = fs.readFileSync(targetHtmlFile, 'utf8');
+                if (content.includes('</head>')) {
+                    content = content.replace('</head>', ANTI_THEFT_SCRIPT + '\n</head>');
+                } else {
+                    content += ANTI_THEFT_SCRIPT;
+                }
+                fs.writeFileSync(targetHtmlFile, content);
+            }
+        }
         
         if (!users[username].projects) users[username].projects = [];
         if (!users[username].projects.includes(siteName)) {
