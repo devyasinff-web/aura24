@@ -73,7 +73,7 @@ function requireAuth(req, res, next) {
     next();
 }
 function requireAdmin(req, res, next) {
-    if (req.session.username === 'devyasin') next();
+    if (req.session.isAdmin) next();
     else res.status(403).send('Forbidden: Admin access only.');
 }
 
@@ -104,12 +104,32 @@ app.post('/login', (req, res) => {
     const hash = crypto.createHash('sha256').update(password).digest('hex');
     if (users[username].password !== hash) return res.status(400).send('Invalid credentials.');
     req.session.username = username;
-    res.redirect(username === 'devyasin' ? '/devyasin' : '/dashboard.html');
+    res.redirect('/dashboard.html');
 });
 
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
+});
+
+// --- Admin Auth ---
+app.post('/api/admin/login', (req, res) => {
+    const { password } = req.body;
+    const adminPass = process.env.ADMIN_PASSWORD || 'default_admin_password_change_me';
+    if (password === adminPass) {
+        req.session.isAdmin = true;
+        res.redirect('/devyasin');
+    } else {
+        res.send('<h2>Invalid Admin Password. <a href="/devyasin">Try again</a></h2>');
+    }
+});
+
+app.get('/devyasin', (req, res) => {
+    if (req.session.isAdmin) {
+        res.sendFile(path.join(__dirname, 'admin.html'));
+    } else {
+        res.sendFile(path.join(__dirname, 'public/admin-login.html'));
+    }
 });
 
 // --- API Routes ---
@@ -133,7 +153,6 @@ app.post('/api/rename-project', requireAuth, (req, res) => {
         return res.status(400).send('New name is invalid or already taken.');
     }
 
-    // Rename folders
     const oldSiteDir = path.join(sitesDir, oldName);
     const newSiteDir = path.join(sitesDir, newName);
     const oldVerDir = path.join(versionsDir, oldName);
@@ -142,26 +161,22 @@ app.post('/api/rename-project', requireAuth, (req, res) => {
     if (fs.existsSync(oldSiteDir)) fs.renameSync(oldSiteDir, newSiteDir);
     if (fs.existsSync(oldVerDir)) fs.renameSync(oldVerDir, newVerDir);
 
-    // Update users.json
     users[username].projects = users[username].projects.map(p => p === oldName ? newName : p);
     saveUsers(users);
 
-    try {
-        execSync(`git rm -r --ignore-unmatch sites/${oldName} versions/${oldName}`);
-    } catch(e) {}
-    
+    try { execSync(`git rm -r --ignore-unmatch sites/${oldName} versions/${oldName}`); } catch(e) {}
     setTimeout(() => pushToGitHub(`Renamed project from ${oldName} to ${newName}`), 500);
     res.json({ success: true, newName });
 });
 
-app.get('/api/download-version', requireAuth, (req, res) => {
+app.get('/api/download-version', (req, res) => {
     const { project, v } = req.query;
-    const username = req.session.username;
-    const users = getUsers();
     
-    // Admin can download anything, others only their own
-    if (username !== 'devyasin' && !users[username].projects.includes(project)) {
-        return res.status(403).send('Not authorized.');
+    // Check auth
+    if (!req.session.isAdmin) {
+        if (!req.session.username) return res.status(403).send('Not logged in.');
+        const users = getUsers();
+        if (!users[req.session.username].projects.includes(project)) return res.status(403).send('Not authorized.');
     }
     
     const verPath = path.join(versionsDir, project);
@@ -205,7 +220,6 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
         return res.status(403).send('Not your project to update.');
     }
 
-    // Determine Version Number
     if (!fs.existsSync(verTargetDir)) fs.mkdirSync(verTargetDir, { recursive: true });
     const existingVersions = fs.readdirSync(verTargetDir);
     const versionNum = existingVersions.length + 1;
@@ -213,11 +227,9 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
     const filePath = req.file.path;
     const ext = path.extname(req.file.originalname).toLowerCase();
     
-    // Copy to versions
     const verFilePath = path.join(verTargetDir, `${versionNum}.0${ext === '.zip' ? '.zip' : '.html'}`);
     fs.copyFileSync(filePath, verFilePath);
 
-    // Empty target site dir for clean extraction
     if (fs.existsSync(targetDir)) fs.rmSync(targetDir, { recursive: true, force: true });
     fs.mkdirSync(targetDir, { recursive: true });
 
@@ -229,7 +241,7 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
             const newFilePath = path.join(targetDir, 'index.html');
             fs.copyFileSync(filePath, newFilePath);
         }
-        fs.unlinkSync(filePath); // delete temp upload
+        fs.unlinkSync(filePath); 
         
         if (!users[username].projects) users[username].projects = [];
         if (!users[username].projects.includes(siteName)) {
@@ -287,15 +299,14 @@ app.post('/api/delete', requireAuth, (req, res) => {
     res.json({ success: true });
 });
 
-// Admin endpoints (omitted re-implementation of replace for brevity, admin can just delete/ban)
-app.get('/devyasin', requireAuth, requireAdmin, (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
-app.get('/api/admin/all', requireAuth, requireAdmin, (req, res) => {
+// --- Admin Endpoints ---
+app.get('/api/admin/all', requireAdmin, (req, res) => {
     const users = getUsers();
     res.json({ users: Object.fromEntries(Object.entries(users).map(([k,v]) => [k, { banned: v.banned, projects: v.projects }])) });
 });
-app.post('/api/admin/ban', requireAuth, requireAdmin, (req, res) => {
+
+app.post('/api/admin/ban', requireAdmin, (req, res) => {
     const { targetUsername } = req.body;
-    if (targetUsername === 'devyasin') return res.status(400).send();
     const users = getUsers();
     if (users[targetUsername]) {
         users[targetUsername].banned = true;
@@ -308,6 +319,24 @@ app.post('/api/admin/ban', requireAuth, requireAdmin, (req, res) => {
         saveUsers(users);
         setTimeout(() => pushToGitHub(`Admin banned user: ${targetUsername}`), 500);
     }
+    res.json({ success: true });
+});
+
+app.post('/api/admin/delete-project', requireAdmin, (req, res) => {
+    const { siteName, ownerName } = req.body;
+    const users = getUsers();
+    
+    if (users[ownerName]) {
+        users[ownerName].projects = users[ownerName].projects.filter(p => p !== siteName);
+        saveUsers(users);
+    }
+    
+    if (fs.existsSync(path.join(sitesDir, siteName))) fs.rmSync(path.join(sitesDir, siteName), { recursive: true, force: true });
+    if (fs.existsSync(path.join(versionsDir, siteName))) fs.rmSync(path.join(versionsDir, siteName), { recursive: true, force: true });
+    
+    try { execSync(`git rm -r --ignore-unmatch sites/${siteName} versions/${siteName}`); } catch(e) {}
+    setTimeout(() => pushToGitHub(`Admin deleted site: ${siteName}`), 500);
+    
     res.json({ success: true });
 });
 
