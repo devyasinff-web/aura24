@@ -298,6 +298,27 @@ const ANTI_THEFT_SCRIPT = `
 <style>body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }</style>
 `;
 
+function injectSecurityRecursively(dir) {
+    if (!fs.existsSync(dir)) return;
+    const files = fs.readdirSync(dir);
+    for (const file of files) {
+        const fullPath = path.join(dir, file);
+        if (fs.statSync(fullPath).isDirectory()) {
+            injectSecurityRecursively(fullPath);
+        } else if (fullPath.endsWith('.html') || fullPath.endsWith('.htm')) {
+            try {
+                let content = fs.readFileSync(fullPath, 'utf8');
+                if (content.includes('</head>')) {
+                    content = content.replace('</head>', ANTI_THEFT_SCRIPT + '\n</head>');
+                } else {
+                    content += ANTI_THEFT_SCRIPT;
+                }
+                fs.writeFileSync(fullPath, content);
+            } catch(e) { console.error("Could not secure:", fullPath); }
+        }
+    }
+}
+
 app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
     let siteName = req.body.siteName;
     if (!siteName || !req.file) return res.status(400).send('Name and file required.');
@@ -346,18 +367,9 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
         }
         fs.unlinkSync(filePath); 
         
-        // Anti-Theft Injection
+        // Deep Anti-Theft Injection
         if (enableSecurity) {
-            const targetHtmlFile = path.join(targetDir, 'index.html');
-            if (fs.existsSync(targetHtmlFile)) {
-                let content = fs.readFileSync(targetHtmlFile, 'utf8');
-                if (content.includes('</head>')) {
-                    content = content.replace('</head>', ANTI_THEFT_SCRIPT + '\n</head>');
-                } else {
-                    content += ANTI_THEFT_SCRIPT;
-                }
-                fs.writeFileSync(targetHtmlFile, content);
-            }
+            injectSecurityRecursively(targetDir);
         }
         
         if (!users[username].projects) users[username].projects = [];
