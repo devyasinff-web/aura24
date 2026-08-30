@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hosting Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            color: #333;
+        }
+        .header {
+            background-color: #2a5298;
+            color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .header a {
+            color: white;
+            text-decoration: none;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 4px;
+        }
+        .header a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .container {
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+        }
+        .card {
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        h2 {
+            margin-top: 0;
+            color: #2d3748;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            font-size: 18px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #4a5568;
+            font-size: 14px;
+        }
+        input[type="text"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #48bb78;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover { background-color: #38a169; }
+        
+        /* Projects List */
+        .project-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .project-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .project-info h3 {
+            margin: 0 0 5px 0;
+            color: #2a5298;
+        }
+        .project-info a {
+            color: #4a5568;
+            font-size: 14px;
+        }
+        .status {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .status.live { background: #c6f6d5; color: #22543d; }
+        .status.offline { background: #fed7d7; color: #742a2a; }
+        
+        .delete-btn {
+            background-color: #e53e3e;
+            width: auto;
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        .delete-btn:hover { background-color: #c53030; }
+
+        .alert {
+            padding: 10px;
+            background: #c6f6d5;
+            color: #22543d;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Dashboard - Welcome <span id="username-display"></span></h1>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <div class="container">
+        <!-- Upload Form -->
+        <div class="card">
+            <h2>Deploy New Site</h2>
+            <div id="success-alert" class="alert">Site deployed successfully!</div>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label>URL Name (e.g. my-site):</label>
+                    <input type="text" name="siteName" required placeholder="lowercase letters only">
+                </div>
+                <div class="form-group">
+                    <label>Upload File (.zip or .html):</label>
+                    <input type="file" name="siteFile" required accept=".html,.htm,.zip">
+                </div>
+                <button type="submit">Upload & Deploy</button>
+            </form>
+        </div>
+
+        <!-- Projects List -->
+        <div class="card">
+            <h2>My Projects</h2>
+            <ul class="project-list" id="projects-container">
+                <li>Loading projects...</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Check URL for success parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('success')) {
+            document.getElementById('success-alert').style.display = 'block';
+            document.getElementById('success-alert').innerText = `Site '${urlParams.get('success')}' deployed successfully!`;
+            // Remove parameter from URL
+            window.history.replaceState(null, null, window.location.pathname);
+        }
+
+        // Fetch User Data
+        fetch('/api/user')
+            .then(res => {
+                if (!res.ok) window.location.href = '/';
+                return res.json();
+            })
+            .then(data => {
+                document.getElementById('username-display').innerText = data.username;
+                const container = document.getElementById('projects-container');
+                container.innerHTML = '';
+                
+                if (data.projects.length === 0) {
+                    container.innerHTML = '<li style="color: #718096">You have no projects yet.</li>';
+                    return;
+                }
+
+                data.projects.forEach(proj => {
+                    const li = document.createElement('li');
+                    li.className = 'project-item';
+                    
+                    const statusClass = proj.live ? 'live' : 'offline';
+                    const statusText = proj.live ? 'Live' : 'Offline (Deleted or Pending Sync)';
+                    
+                    li.innerHTML = `
+                        <div class="project-info">
+                            <h3>${proj.name}</h3>
+                            <a href="/${proj.name}" target="_blank">View Site: /${proj.name}</a><br>
+                            <span class="status ${statusClass}">${statusText}</span>
+                        </div>
+                        <button class="delete-btn" onclick="deleteProject('${proj.name}')">Delete</button>
+                    `;
+                    container.appendChild(li);
+                });
+            });
+
+        function deleteProject(name) {
+            const confirmName = prompt(`To delete this project, please type the name exactly: "${name}"`);
+            if (confirmName === name) {
+                fetch('/api/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ siteName: name })
+                }).then(res => {
+                    if(res.ok) {
+                        alert('Project deleted successfully.');
+                        window.location.reload();
+                    } else {
+                        alert('Failed to delete project.');
+                    }
+                });
+            } else if (confirmName !== null) {
+                alert('Project name did not match. Deletion cancelled.');
+            }
+        }
+    </script>
+</body>
+</html>
