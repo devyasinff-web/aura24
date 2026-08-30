@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const AdmZip = require('adm-zip');
 const { execSync } = require('child_process');
-const session = require('express-session');
+const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
 const cors = require('cors');
@@ -17,23 +17,22 @@ const PORT = process.env.PORT || 3000;
 app.use(cors({ origin: '*' })); // Allow external HTML forms from subscribers
 
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+    windowMs: 15 * 60 * 1000,
+    max: 100,
     message: 'Too many requests from this IP, please try again after 15 minutes',
     standardHeaders: true,
     legacyHeaders: false,
 });
-app.use(limiter); // Apply rate limiter to all routes
+app.use(limiter);
 
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(session({
-    secret: 'render-hosting-secret-12345',
-    resave: false,
-    saveUninitialized: false,
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 }
+app.use(cookieSession({
+    name: 'session',
+    keys: ['render-hosting-secret-12345'],
+    maxAge: 24 * 60 * 60 * 1000 // default 24h, overridden in login
 }));
 
 // Setup directories
@@ -81,7 +80,7 @@ function requireAuth(req, res, next) {
     if (!req.session.username) return res.redirect('/');
     const users = getUsers();
     if (users[req.session.username] && users[req.session.username].banned) {
-        req.session.destroy();
+        req.session = null;
         return res.status(403).send('Your account has been banned.');
     }
     next();
@@ -105,24 +104,37 @@ app.post('/register', (req, res) => {
     users[username] = { password: hash, projects: [], banned: false };
     saveUsers(users);
     setTimeout(() => pushToGitHub(`Registered user: ${username}`), 500);
+    
+    if (req.body.remember === 'yes') {
+        req.sessionOptions.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+    } else {
+        req.sessionOptions.maxAge = false; // session only
+    }
     req.session.username = username;
     res.redirect('/dashboard.html');
 });
 
 app.post('/login', (req, res) => {
-    let { username, password } = req.body;
+    let { username, password, remember } = req.body;
     username = username.toLowerCase().replace(/[^a-z0-9_-]/g, '');
     const users = getUsers();
     if (!users[username]) return res.status(400).send('Invalid credentials.');
     if (users[username].banned) return res.status(403).send('Account banned.');
     const hash = crypto.createHash('sha256').update(password).digest('hex');
     if (users[username].password !== hash) return res.status(400).send('Invalid credentials.');
+    
+    if (remember === 'yes') {
+        req.sessionOptions.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+    } else {
+        req.sessionOptions.maxAge = false; // session only
+    }
+    
     req.session.username = username;
     res.redirect('/dashboard.html');
 });
 
 app.get('/logout', (req, res) => {
-    req.session.destroy();
+    req.session = null;
     res.redirect('/');
 });
 
