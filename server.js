@@ -269,8 +269,28 @@ app.post('/api/rename-project', requireAuth, (req, res) => {
         const oldVerDir = path.join(versionsDir, oldName);
         const newVerDir = path.join(versionsDir, newName);
 
-        if (fs.existsSync(oldSiteDir)) fs.renameSync(oldSiteDir, newSiteDir);
-        if (fs.existsSync(oldVerDir)) fs.renameSync(oldVerDir, newVerDir);
+        function safeRename(oldPath, newPath) {
+            try {
+                fs.renameSync(oldPath, newPath);
+            } catch (err) {
+                if (err.code === 'EXDEV') {
+                    // Fallback for cross-device links (e.g., Docker/OverlayFS on Render)
+                    if (fs.cpSync) {
+                        fs.cpSync(oldPath, newPath, { recursive: true });
+                        fs.rmSync(oldPath, { recursive: true, force: true });
+                    } else {
+                        // Older Node.js fallback
+                        const { execSync } = require('child_process');
+                        execSync(`mv "${oldPath}" "${newPath}"`);
+                    }
+                } else {
+                    throw err;
+                }
+            }
+        }
+
+        if (fs.existsSync(oldSiteDir)) safeRename(oldSiteDir, newSiteDir);
+        if (fs.existsSync(oldVerDir)) safeRename(oldVerDir, newVerDir);
 
         users[username].projects = [...new Set(users[username].projects.map(p => p === oldName ? newName : p))];
         saveUsers(users);
