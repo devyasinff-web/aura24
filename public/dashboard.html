@@ -5,134 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hosting Dashboard</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f7f6;
-            margin: 0;
-            color: #333;
-        }
-        .header {
-            background-color: #2a5298;
-            color: white;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 20px;
-        }
-        .header a {
-            color: white;
-            text-decoration: none;
-            background: rgba(255,255,255,0.2);
-            padding: 8px 15px;
-            border-radius: 4px;
-        }
-        .header a:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        .container {
-            max-width: 900px;
-            margin: 30px auto;
-            padding: 0 20px;
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 20px;
-        }
-        .card {
-            background: white;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        h2 {
-            margin-top: 0;
-            color: #2d3748;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 10px;
-            font-size: 18px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #4a5568;
-            font-size: 14px;
-        }
-        input[type="text"], input[type="file"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e0;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #48bb78;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        button:hover { background-color: #38a169; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; color: #333; }
+        .header { background-color: #2a5298; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { margin: 0; font-size: 20px; }
+        .header a { color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 4px; }
+        .container { max-width: 900px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 1fr 2fr; gap: 20px; }
+        .card { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h2 { margin-top: 0; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; font-size: 18px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; font-size: 14px; }
+        input[type="text"], input[type="file"] { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 4px; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background-color: #48bb78; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
         
-        /* Projects List */
-        .project-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .project-item {
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .project-info h3 {
-            margin: 0 0 5px 0;
-            color: #2a5298;
-        }
-        .project-info a {
-            color: #4a5568;
-            font-size: 14px;
-        }
-        .status {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: bold;
-            margin-top: 5px;
-        }
-        .status.live { background: #c6f6d5; color: #22543d; }
-        .status.offline { background: #fed7d7; color: #742a2a; }
+        .project-item { border: 1px solid #e2e8f0; border-radius: 6px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+        .project-info h3 { margin: 0 0 5px 0; color: #2a5298; }
+        .btn-group button { width: auto; padding: 8px 12px; margin-left: 5px; }
+        .btn-edit { background-color: #3182ce; }
+        .btn-delete { background-color: #e53e3e; }
         
-        .delete-btn {
-            background-color: #e53e3e;
-            width: auto;
-            padding: 8px 15px;
-            font-size: 14px;
-        }
-        .delete-btn:hover { background-color: #c53030; }
-
-        .alert {
-            padding: 10px;
-            background: #c6f6d5;
-            color: #22543d;
-            border-radius: 4px;
-            margin-bottom: 20px;
-            display: none;
-        }
+        /* Modal Styles */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 25px; border-radius: 8px; width: 500px; max-height: 80vh; overflow-y: auto; }
+        
+        .version-list { margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px; }
+        .version-item { display: flex; justify-content: space-between; padding: 8px; background: #f7fafc; margin-bottom: 5px; border-radius: 4px; }
+        .version-item a { color: #3182ce; text-decoration: none; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -142,133 +39,162 @@
     </div>
 
     <div class="container">
-        <!-- Upload Form -->
         <div class="card">
             <h2>Deploy New Site</h2>
-            <div id="success-alert" class="alert">Site deployed successfully!</div>
             <form action="/upload" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
-                    <label>URL Name (e.g. my-site):</label>
-                    <input type="text" name="siteName" id="siteNameInput" required placeholder="lowercase letters only">
-                    <div id="availabilityMsg" style="display:none; font-size: 12px; margin-top: 5px; font-weight: bold;"></div>
+                    <label>URL Name:</label>
+                    <input type="text" name="siteName" id="uploadSiteName" required>
+                    <div id="uploadMsg" style="font-size:12px; font-weight:bold; margin-top:5px;"></div>
                 </div>
                 <div class="form-group">
-                    <label>Upload File (.zip or .html):</label>
+                    <label>Upload File (.zip/.html):</label>
                     <input type="file" name="siteFile" required accept=".html,.htm,.zip">
                 </div>
                 <button type="submit">Upload & Deploy</button>
             </form>
         </div>
 
-        <!-- Projects List -->
         <div class="card">
             <h2>My Projects</h2>
-            <ul class="project-list" id="projects-container">
-                <li>Loading projects...</li>
-            </ul>
+            <div id="projects-container">Loading...</div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h2 style="margin-top:0">Manage: <span id="editProjName"></span></h2>
+            
+            <!-- Rename Section -->
+            <div style="background:#f7fafc; padding:15px; border-radius:6px; margin-bottom:20px;">
+                <h4 style="margin:0 0 10px 0">Rename URL Link</h4>
+                <div class="form-group">
+                    <input type="text" id="newUrlName" placeholder="New URL name">
+                    <div id="renameMsg" style="font-size:12px; font-weight:bold; margin-top:5px;"></div>
+                </div>
+                <button onclick="renameProject()" style="width:auto; padding:8px 15px;">Save Name</button>
+            </div>
+
+            <!-- Update Version Section -->
+            <div style="background:#f7fafc; padding:15px; border-radius:6px; margin-bottom:20px;">
+                <h4 style="margin:0 0 10px 0">Upload New Version</h4>
+                <form action="/upload" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="siteName" id="updateSiteName">
+                    <input type="hidden" name="isUpdate" value="true">
+                    <div class="form-group">
+                        <input type="file" name="siteFile" required accept=".html,.htm,.zip">
+                    </div>
+                    <button type="submit" style="width:auto; padding:8px 15px;">Upload Update</button>
+                </form>
+            </div>
+
+            <!-- Version History -->
+            <div>
+                <h4 style="margin:0 0 10px 0">Version History (Downloads)</h4>
+                <div class="version-list" id="versionList"></div>
+            </div>
+
+            <button onclick="closeEditModal()" style="background:#a0aec0; margin-top:20px;">Close Menu</button>
         </div>
     </div>
 
     <script>
-        // Check URL for success parameter
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('success')) {
-            document.getElementById('success-alert').style.display = 'block';
-            document.getElementById('success-alert').innerText = `Site '${urlParams.get('success')}' deployed successfully!`;
-            // Remove parameter from URL
-            window.history.replaceState(null, null, window.location.pathname);
-        }
+        let currentEditingProject = '';
 
-        // Fetch User Data
         fetch('/api/user')
-            .then(res => {
-                if (!res.ok) window.location.href = '/';
-                return res.json();
-            })
+            .then(res => res.json())
             .then(data => {
                 document.getElementById('username-display').innerText = data.username;
                 const container = document.getElementById('projects-container');
                 container.innerHTML = '';
                 
-                if (data.projects.length === 0) {
-                    container.innerHTML = '<li style="color: #718096">You have no projects yet.</li>';
-                    return;
-                }
-
                 data.projects.forEach(proj => {
-                    const li = document.createElement('li');
-                    li.className = 'project-item';
+                    const div = document.createElement('div');
+                    div.className = 'project-item';
                     
-                    const statusClass = proj.live ? 'live' : 'offline';
-                    const statusText = proj.live ? 'Live' : 'Offline (Deleted or Pending Sync)';
-                    
-                    li.innerHTML = `
+                    div.innerHTML = `
                         <div class="project-info">
-                            <h3>${proj.name}</h3>
-                            <a href="/${proj.name}" target="_blank">View Site: /${proj.name}</a><br>
-                            <span class="status ${statusClass}">${statusText}</span>
+                            <h3>${proj.name} <span style="font-size:12px; color:gray">(${proj.versions.length} versions)</span></h3>
+                            <a href="/${proj.name}" target="_blank" style="font-size:14px;">Visit: /${proj.name}</a>
                         </div>
-                        <button class="delete-btn" onclick="deleteProject('${proj.name}')">Delete</button>
+                        <div class="btn-group">
+                            <button class="btn-edit" onclick='openEditModal(${JSON.stringify(proj)})'>✏️ Edit</button>
+                            <button class="btn-delete" onclick="deleteProject('${proj.name}')">🗑️ Delete</button>
+                        </div>
                     `;
-                    container.appendChild(li);
+                    container.appendChild(div);
                 });
             });
 
+        // URL Availability Check for New Upload
+        const uploadSiteName = document.getElementById('uploadSiteName');
+        const uploadMsg = document.getElementById('uploadMsg');
+        uploadSiteName.addEventListener('input', function() {
+            this.value = this.value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+            if(!this.value) { uploadMsg.innerText = ''; return; }
+            fetch('/api/check-url?name=' + this.value).then(r=>r.json()).then(d => {
+                uploadMsg.innerText = d.available ? 'Available!' : 'Not Available';
+                uploadMsg.style.color = d.available ? 'green' : 'red';
+            });
+        });
+
+        // URL Availability Check for Rename
+        const newUrlName = document.getElementById('newUrlName');
+        const renameMsg = document.getElementById('renameMsg');
+        newUrlName.addEventListener('input', function() {
+            this.value = this.value.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+            if(!this.value || this.value === currentEditingProject) { renameMsg.innerText = ''; return; }
+            fetch('/api/check-url?name=' + this.value).then(r=>r.json()).then(d => {
+                renameMsg.innerText = d.available ? 'Available!' : 'Not Available';
+                renameMsg.style.color = d.available ? 'green' : 'red';
+            });
+        });
+
         function deleteProject(name) {
-            const confirmName = prompt(`To delete this project, please type the name exactly: "${name}"`);
-            if (confirmName === name) {
+            if (prompt(`Type "${name}" to delete this project and ALL its versions:`) === name) {
                 fetch('/api/delete', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ siteName: name })
-                }).then(res => {
-                    if(res.ok) {
-                        alert('Project deleted successfully.');
-                        window.location.reload();
-                    } else {
-                        alert('Failed to delete project.');
-                    }
-                });
-            } else if (confirmName !== null) {
-                alert('Project name did not match. Deletion cancelled.');
+                }).then(res => { if(res.ok) window.location.reload(); });
             }
         }
 
-        // Live URL Checking
-        const siteNameInput = document.getElementById('siteNameInput');
-        const availabilityMsg = document.getElementById('availabilityMsg');
-        let typingTimer;
+        function openEditModal(proj) {
+            currentEditingProject = proj.name;
+            document.getElementById('editModal').style.display = 'flex';
+            document.getElementById('editProjName').innerText = proj.name;
+            document.getElementById('updateSiteName').value = proj.name;
+            document.getElementById('newUrlName').value = proj.name;
+            
+            const vList = document.getElementById('versionList');
+            vList.innerHTML = '';
+            proj.versions.forEach(v => {
+                vList.innerHTML += `
+                    <div class="version-item">
+                        <span>Version ${v}</span>
+                        <a href="/api/download-version?project=${proj.name}&v=${v}" download>⬇️ Download</a>
+                    </div>
+                `;
+            });
+        }
 
-        siteNameInput.addEventListener('input', function() {
-            clearTimeout(typingTimer);
-            const val = this.value;
-            
-            // Auto lowercase
-            this.value = val.toLowerCase().replace(/[^a-z0-9_-]/g, '');
-            
-            if (!this.value) {
-                siteNameInput.style.borderColor = '#cbd5e0';
-                availabilityMsg.style.display = 'none';
-                return;
+        function closeEditModal() { document.getElementById('editModal').style.display = 'none'; }
+
+        function renameProject() {
+            const newName = document.getElementById('newUrlName').value;
+            if (newName && newName !== currentEditingProject) {
+                fetch('/api/rename-project', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ oldName: currentEditingProject, newName: newName })
+                }).then(res => {
+                    if(res.ok) { alert('Renamed!'); window.location.reload(); }
+                    else { alert('Failed to rename. Name might be taken.'); }
+                });
             }
-
-            typingTimer = setTimeout(() => {
-                fetch('/api/check-url?name=' + this.value)
-                    .then(res => res.json())
-                    .then(data => {
-                        availabilityMsg.style.display = 'block';
-                        if (data.available) {
-                            siteNameInput.style.borderColor = '#48bb78';
-                            availabilityMsg.style.color = '#48bb78';
-                            availabilityMsg.innerText = 'Available!';
-                        } else {
-                            siteNameInput.style.borderColor = '#e53e3e';
-                            availabilityMsg.style.color = '#e53e3e';
-                            availabilityMsg.innerText = 'Not Available';
-                        }
-                    });
-            }, 500); // 500ms delay to avoid spamming the API
-        });
+        }
     </script>
 </body>
 </html>
