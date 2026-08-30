@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload to Render Server</title>
+    <title>Hosting Server - Login</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,12 +16,12 @@
             color: #333;
         }
         .container {
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: white;
             padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             width: 100%;
-            max-width: 450px;
+            max-width: 350px;
         }
         h2 {
             text-align: center;
@@ -38,7 +38,7 @@
             font-weight: 600;
             color: #4a5568;
         }
-        input[type="text"], input[type="file"] {
+        input[type="text"], input[type="password"] {
             width: 100%;
             padding: 12px;
             border: 2px solid #e2e8f0;
@@ -46,14 +46,14 @@
             box-sizing: border-box;
             transition: border-color 0.3s;
         }
-        input[type="text"]:focus, input[type="file"]:focus {
-            border-color: #667eea;
+        input:focus {
+            border-color: #2a5298;
             outline: none;
         }
         button {
             width: 100%;
             padding: 14px;
-            background-color: #667eea;
+            background-color: #2a5298;
             color: white;
             border: none;
             border-radius: 6px;
@@ -61,37 +61,71 @@
             font-size: 16px;
             font-weight: bold;
             transition: background-color 0.3s;
+            margin-bottom: 10px;
         }
         button:hover {
-            background-color: #5a67d8;
+            background-color: #1e3c72;
         }
-        .info {
-            font-size: 13px;
-            color: #718096;
-            margin-top: 15px;
+        .btn-register {
+            background-color: #48bb78;
+        }
+        .btn-register:hover {
+            background-color: #38a169;
+        }
+        .toggle-text {
             text-align: center;
-            line-height: 1.5;
+            font-size: 14px;
+            color: #718096;
+            cursor: pointer;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Upload Your Website</h2>
-        <form action="/upload" method="POST" enctype="multipart/form-data">
+    <div class="container" id="login-box">
+        <h2>Login to Account</h2>
+        <form action="/login" method="POST">
             <div class="form-group">
-                <label for="siteName">URL Name (e.g. FFX):</label>
-                <input type="text" id="siteName" name="siteName" required placeholder="Enter name">
+                <label>Username:</label>
+                <input type="text" name="username" required>
             </div>
             <div class="form-group">
-                <label for="siteFile">Upload File:</label>
-                <input type="file" id="siteFile" name="siteFile" required accept=".html,.htm,.zip">
+                <label>Password:</label>
+                <input type="password" name="password" required>
             </div>
-            <button type="submit">Upload & Publish</button>
-            <div class="info">
-                <strong>Supported Files:</strong><br>
-                Upload a single <code>.html</code> file or a <code>.zip</code> file containing your entire website (make sure it has an index.html).
-            </div>
+            <button type="submit">Login</button>
         </form>
+        <div class="toggle-text" onclick="toggleMode()">New user? Create an account</div>
     </div>
+
+    <div class="container" id="register-box" style="display: none;">
+        <h2>Create Account</h2>
+        <form action="/register" method="POST">
+            <div class="form-group">
+                <label>Choose Username:</label>
+                <input type="text" name="username" required>
+            </div>
+            <div class="form-group">
+                <label>Choose Password:</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="btn-register">Register Account</button>
+        </form>
+        <div class="toggle-text" onclick="toggleMode()">Already have an account? Login</div>
+    </div>
+
+    <script>
+        function toggleMode() {
+            const loginBox = document.getElementById('login-box');
+            const regBox = document.getElementById('register-box');
+            if (loginBox.style.display === 'none') {
+                loginBox.style.display = 'block';
+                regBox.style.display = 'none';
+            } else {
+                loginBox.style.display = 'none';
+                regBox.style.display = 'block';
+            }
+        }
+    </script>
 </body>
 </html>
