@@ -324,7 +324,18 @@ app.post('/api/delete', requireAuth, (req, res) => {
 // --- Admin Endpoints ---
 app.get('/api/admin/all', requireAdmin, (req, res) => {
     const users = getUsers();
-    res.json({ users: Object.fromEntries(Object.entries(users).map(([k,v]) => [k, { banned: v.banned, projects: v.projects }])) });
+    const sanitizedUsers = {};
+    for (let u in users) {
+        sanitizedUsers[u] = {
+            banned: users[u].banned || false,
+            projects: users[u].projects || [],
+            projectsStatus: (users[u].projects || []).map(p => ({
+                name: p,
+                live: fs.existsSync(path.join(sitesDir, p))
+            }))
+        };
+    }
+    res.json({ users: sanitizedUsers });
 });
 
 app.post('/api/admin/ban', requireAdmin, (req, res) => {
