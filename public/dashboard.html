@@ -4,8 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hosting Dashboard</title>
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+        document.onkeydown = function(e) {
+            if(e.keyCode == 123) return false;
+            if(e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) return false;
+            if(e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83)) return false;
+        };
+        document.onselectstart = function() { return false; };
+    </script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; color: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; color: #333; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }
         .header { background-color: #2a5298; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
         .header h1 { margin: 0; font-size: 20px; }
         .header a { color: white; text-decoration: none; background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 4px; }
@@ -50,6 +59,10 @@
                 <div class="form-group">
                     <label>Upload File (.zip/.html):</label>
                     <input type="file" name="siteFile" required accept=".html,.htm,.zip">
+                </div>
+                <div class="form-group" style="display:flex; align-items:center;">
+                    <input type="checkbox" name="enableSecurity" value="yes" id="secCheck" style="width:auto; margin-right:8px;">
+                    <label for="secCheck" style="margin:0; font-size:13px; color:#e53e3e;">🛡️ Enable Advanced Anti-Theft Security</label>
                 </div>
                 <button type="submit">Upload & Deploy</button>
             </form>
