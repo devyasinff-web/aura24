@@ -128,7 +128,29 @@ app.get('/devyasin', (req, res) => {
     if (req.session.isAdmin) {
         res.sendFile(path.join(__dirname, 'admin.html'));
     } else {
-        res.sendFile(path.join(__dirname, 'public/admin-login.html'));
+        res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Admin Login</title>
+            <style>
+                body { font-family: 'Segoe UI', sans-serif; background: #1a202c; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+                .login-box { background: #2d3748; padding: 40px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); text-align: center; width: 100%; max-width: 300px; }
+                input[type="password"] { width: 100%; padding: 12px; margin: 20px 0; border: 1px solid #4a5568; background: #1a202c; color: white; border-radius: 4px; box-sizing: border-box; }
+                button { width: 100%; padding: 12px; background: #3182ce; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; }
+            </style>
+        </head>
+        <body>
+            <div class="login-box">
+                <h2 style="color:#63b3ed; margin-top:0;">Admin Portal</h2>
+                <form action="/api/admin/login" method="POST">
+                    <input type="password" name="password" placeholder="Enter Admin Password" required autofocus>
+                    <button type="submit">Unlock</button>
+                </form>
+            </div>
+        </body>
+        </html>
+        `);
     }
 });
 
