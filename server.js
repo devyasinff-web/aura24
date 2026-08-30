@@ -243,32 +243,45 @@ app.get('/api/check-url', (req, res) => {
 });
 
 app.post('/api/rename-project', requireAuth, (req, res) => {
-    let { oldName, newName } = req.body;
-    const username = req.session.username;
-    const users = getUsers();
-    
-    if (!users[username].projects) users[username].projects = [];
-    if (!users[username].projects.includes(oldName)) return res.status(403).send('Not your project.');
-    
-    newName = newName.toLowerCase().replace(/[^a-z0-9_-]/g, '');
-    if (!newName || fs.existsSync(path.join(sitesDir, newName))) {
-        return res.status(400).send('New name is invalid or already taken.');
+    try {
+        let { oldName, newName } = req.body;
+        const username = req.session.username;
+        const users = getUsers();
+        
+        if (!users[username] || !users[username].projects) {
+            return res.status(401).json({ error: 'Session invalid or data reset. Please relogin.' });
+        }
+        if (!users[username].projects.includes(oldName)) return res.status(403).send('Not your project.');
+        
+        newName = newName.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+        if (!newName) return res.status(400).send('New name is invalid.');
+
+        if (oldName === newName) {
+            return res.json({ success: true, newName }); // No rename needed
+        }
+
+        if (fs.existsSync(path.join(sitesDir, newName))) {
+            return res.status(400).send('New name is already taken.');
+        }
+
+        const oldSiteDir = path.join(sitesDir, oldName);
+        const newSiteDir = path.join(sitesDir, newName);
+        const oldVerDir = path.join(versionsDir, oldName);
+        const newVerDir = path.join(versionsDir, newName);
+
+        if (fs.existsSync(oldSiteDir)) fs.renameSync(oldSiteDir, newSiteDir);
+        if (fs.existsSync(oldVerDir)) fs.renameSync(oldVerDir, newVerDir);
+
+        users[username].projects = [...new Set(users[username].projects.map(p => p === oldName ? newName : p))];
+        saveUsers(users);
+
+        try { execSync(`git rm -r --ignore-unmatch sites/${oldName} versions/${oldName}`); } catch(e) {}
+        setTimeout(() => pushToGitHub(`Renamed project from ${oldName} to ${newName}`), 500);
+        res.json({ success: true, newName });
+    } catch (err) {
+        console.error('Rename error:', err);
+        res.status(500).send('Server Error: ' + err.message);
     }
-
-    const oldSiteDir = path.join(sitesDir, oldName);
-    const newSiteDir = path.join(sitesDir, newName);
-    const oldVerDir = path.join(versionsDir, oldName);
-    const newVerDir = path.join(versionsDir, newName);
-
-    if (fs.existsSync(oldSiteDir)) fs.renameSync(oldSiteDir, newSiteDir);
-    if (fs.existsSync(oldVerDir)) fs.renameSync(oldVerDir, newVerDir);
-
-    users[username].projects = [...new Set(users[username].projects.map(p => p === oldName ? newName : p))];
-    saveUsers(users);
-
-    try { execSync(`git rm -r --ignore-unmatch sites/${oldName} versions/${oldName}`); } catch(e) {}
-    setTimeout(() => pushToGitHub(`Renamed project from ${oldName} to ${newName}`), 500);
-    res.json({ success: true, newName });
 });
 
 app.get('/api/download-version', (req, res) => {
