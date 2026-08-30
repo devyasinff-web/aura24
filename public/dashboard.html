@@ -149,7 +149,8 @@
             <form action="/upload" method="POST" enctype="multipart/form-data">
                 <div class="form-group">
                     <label>URL Name (e.g. my-site):</label>
-                    <input type="text" name="siteName" required placeholder="lowercase letters only">
+                    <input type="text" name="siteName" id="siteNameInput" required placeholder="lowercase letters only">
+                    <div id="availabilityMsg" style="display:none; font-size: 12px; margin-top: 5px; font-weight: bold;"></div>
                 </div>
                 <div class="form-group">
                     <label>Upload File (.zip or .html):</label>
@@ -232,6 +233,42 @@
                 alert('Project name did not match. Deletion cancelled.');
             }
         }
+
+        // Live URL Checking
+        const siteNameInput = document.getElementById('siteNameInput');
+        const availabilityMsg = document.getElementById('availabilityMsg');
+        let typingTimer;
+
+        siteNameInput.addEventListener('input', function() {
+            clearTimeout(typingTimer);
+            const val = this.value;
+            
+            // Auto lowercase
+            this.value = val.toLowerCase().replace(/[^a-z0-9_-]/g, '');
+            
+            if (!this.value) {
+                siteNameInput.style.borderColor = '#cbd5e0';
+                availabilityMsg.style.display = 'none';
+                return;
+            }
+
+            typingTimer = setTimeout(() => {
+                fetch('/api/check-url?name=' + this.value)
+                    .then(res => res.json())
+                    .then(data => {
+                        availabilityMsg.style.display = 'block';
+                        if (data.available) {
+                            siteNameInput.style.borderColor = '#48bb78';
+                            availabilityMsg.style.color = '#48bb78';
+                            availabilityMsg.innerText = 'Available!';
+                        } else {
+                            siteNameInput.style.borderColor = '#e53e3e';
+                            availabilityMsg.style.color = '#e53e3e';
+                            availabilityMsg.innerText = 'Not Available';
+                        }
+                    });
+            }, 500); // 500ms delay to avoid spamming the API
+        });
     </script>
 </body>
 </html>
