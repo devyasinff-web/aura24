@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const AdmZip = require('adm-zip');
-const { execSync } = require('child_process');
+const { execSync, exec } = require('child_process');
 const cookieSession = require('cookie-session');
 const cookieParser = require('cookie-parser');
 const crypto = require('crypto');
@@ -74,7 +74,13 @@ function pushToGitHub(commitMessage) {
         const status = execSync('git status --porcelain').toString();
         if (status.length > 0) {
             execSync(`git commit -m "${commitMessage}"`);
-            execSync(`git push "${remoteUrl}" HEAD:main`);
+            exec(`git push "${remoteUrl}" HEAD:main`, { env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } }, (error, stdout, stderr) => {
+                if (error) {
+                    console.error('GitHub Push Error:', error.message);
+                } else {
+                    console.log('GitHub Push Success');
+                }
+            });
         }
     } catch (error) {
         console.error('Failed to save to GitHub:', error.message);
