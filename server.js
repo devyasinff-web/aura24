@@ -53,11 +53,19 @@ if (!fs.existsSync(versionsDir)) fs.mkdirSync(versionsDir);
 if (!fs.existsSync(usersFile)) fs.writeFileSync(usersFile, JSON.stringify({}));
 
 // Helper functions
+let usersCache = null;
 function getUsers() {
-    try { return JSON.parse(fs.readFileSync(usersFile, 'utf8')); } 
-    catch (e) { return {}; }
+    if (usersCache) return usersCache;
+    try { 
+        usersCache = JSON.parse(fs.readFileSync(usersFile, 'utf8')); 
+        return usersCache;
+    } catch (e) { 
+        usersCache = {};
+        return usersCache; 
+    }
 }
 function saveUsers(users) {
+    usersCache = users;
     fs.writeFileSync(usersFile, JSON.stringify(users, null, 2));
 }
 
@@ -250,7 +258,7 @@ app.post('/api/rename-project', requireAuth, (req, res) => {
     if (fs.existsSync(oldSiteDir)) fs.renameSync(oldSiteDir, newSiteDir);
     if (fs.existsSync(oldVerDir)) fs.renameSync(oldVerDir, newVerDir);
 
-    users[username].projects = users[username].projects.map(p => p === oldName ? newName : p);
+    users[username].projects = [...new Set(users[username].projects.map(p => p === oldName ? newName : p))];
     saveUsers(users);
 
     try { execSync(`git rm -r --ignore-unmatch sites/${oldName} versions/${oldName}`); } catch(e) {}
@@ -333,9 +341,11 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
     const verTargetDir = path.join(versionsDir, siteName);
     
     if (!isUpdate && fs.existsSync(targetDir)) {
+        fs.unlinkSync(req.file.path);
         if (!users[username].projects.includes(siteName)) {
-            fs.unlinkSync(req.file.path);
             return res.status(400).send('URL taken.');
+        } else {
+            return res.status(400).send('Project already exists.');
         }
     }
 
@@ -385,6 +395,7 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
         if (!users[username].projects) users[username].projects = [];
         if (!users[username].projects.includes(siteName)) {
             users[username].projects.push(siteName);
+            users[username].projects = [...new Set(users[username].projects)];
             saveUsers(users);
         }
         
@@ -399,7 +410,7 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
 // --- Dashboard API ---
 app.get('/api/user', requireAuth, (req, res) => {
     const users = getUsers();
-    const myProjects = users[req.session.username].projects || [];
+    const myProjects = [...new Set(users[req.session.username].projects || [])];
     
     const projectDetails = myProjects.map(p => {
         let versions = [];
