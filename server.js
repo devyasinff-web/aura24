@@ -95,6 +95,26 @@ function requireAdmin(req, res, next) {
     if (req.session.isAdmin) next();
     else res.status(403).send('Forbidden: Admin access only.');
 }
+// --- Root / Uptime Route ---
+app.get('/', (req, res) => {
+    res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>API Status</title>
+            <style>
+                body { background: #0f111a; color: #4ade80; font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; flex-direction: column; }
+                .pulse { width: 20px; height: 20px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 0 0 rgba(74, 222, 128, 1); animation: pulse 2s infinite; margin-bottom: 20px; }
+                @keyframes pulse { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(74, 222, 128, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } }
+            </style>
+        </head>
+        <body>
+            <div class="pulse"></div>
+            <h2>Server is Running API Active</h2>
+        </body>
+        </html>
+    `);
+});
 
 // --- Auth Routes ---
 app.post('/register', (req, res) => {
