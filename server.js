@@ -99,7 +99,11 @@ function pushToGitHub(commitMessage) {
 function requireAuth(req, res, next) {
     if (!req.session.username) return res.status(401).json({ error: 'Unauthorized' });
     const users = getUsers();
-    if (users[req.session.username] && users[req.session.username].banned) {
+    if (!users[req.session.username]) {
+        req.session = null;
+        return res.status(401).json({ error: 'Session expired or data reset. Please login again.' });
+    }
+    if (users[req.session.username].banned) {
         req.session = null;
         return res.status(403).json({ error: 'Your account has been banned.' });
     }
@@ -243,6 +247,7 @@ app.post('/api/rename-project', requireAuth, (req, res) => {
     const username = req.session.username;
     const users = getUsers();
     
+    if (!users[username].projects) users[username].projects = [];
     if (!users[username].projects.includes(oldName)) return res.status(403).send('Not your project.');
     
     newName = newName.toLowerCase().replace(/[^a-z0-9_-]/g, '');
