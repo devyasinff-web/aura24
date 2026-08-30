@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#030407">
+  <meta name="referrer" content="no-referrer">
+  <script> const config_username = "@yasin"; </script>
+  <script> const config_fullname = "YASIN"; </script>
+  <script> const config_profile_pic = "https://i.postimg.cc/Zn16VgjT/1000009952.jpg"; </script>
+  <title id="page-title"></title>
+  <link rel="icon" id="page-favicon" href="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  
+  <style>
+    :root {
+      --a: #ff0033;
+      --ag: rgba(255, 0, 51, 0.7);
+      --ad: rgba(255, 0, 51, 0.1);
+      --ab: rgba(255, 0, 51, 0.35);
+      --bg0: #030407;
+      --bg1: #07080f;
+      --brd: rgba(255, 255, 255, 0.05);
+      --brda: rgba(255, 0, 51, 0.28);
+      --txt: #e8e8f0;
+      --txm: #8888aa;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg0);
+      color: var(--txt);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    ::-webkit-scrollbar {
+      width: 2px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg0);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--a);
+      border-radius: 2px;
+    }
+
+    ::selection {
+      background: var(--a);
+      color: #fff;
+    }
+
+    /* AMBIENT BG */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(ellipse 90% 50% at 50% 0%, var(--ad) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, var(--ad) 0%, transparent 50%);
+      background-size: 100% 100%, 100% 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(var(--grid-line, rgba(255, 0, 51, 0.015)) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line, rgba(255, 0, 51, 0.015)) 1px, transparent 1px);
+      background-size: 55px 55px;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 430px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Intro Animations */
+    @keyframes cardLineIntro {
+      0%, 70% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+    @keyframes logoIntro {
+      0% { transform: scale(1.5) translateY(20px); opacity: 0; }
+      100% { transform: scale(1) translateY(0); opacity: 1; }
+    }
+    
+    @keyframes fadeUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulseUsername {
+      0% { transform: scale(1); text-shadow: 0 0 10px rgba(255,0,51,0.5); }
+      50% { transform: scale(1.05); text-shadow: 0 0 20px rgba(255,0,51,0.9); }
+      100% { transform: scale(1); text-shadow: 0 0 10px rgba(255,0,51,0.5); }
+    }
+
+    /* Ultra-Premium Profile Logo */
+    .profile-logo-wrap {
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      position: relative;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      animation: logoIntro 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .profile-logo-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--a), transparent 60%, var(--a));
+      animation: spinRing 4s linear infinite;
+      z-index: -1;
+    }
+
+    .profile-logo-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--a), transparent 60%, var(--a));
+      animation: spinRing 4s linear infinite;
+      filter: blur(10px);
+      z-index: -2;
+      opacity: 0.5;
+    }
+
+    @keyframes spinRing {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
+    .profile-logo-img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid rgba(10, 10, 15, 0.9);
+      position: relative;
+      z-index: 2;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+    }
+    
+    .anim-fade-up {
+      opacity: 0;
+      animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    
+    .delay-1 { animation-delay: 0.2s; }
+    .delay-2 { animation-delay: 0.3s; }
+    .delay-3 { animation-delay: 0.4s; }
+    .delay-4 { animation-delay: 0.5s; }
+    .delay-5 { animation-delay: 0.6s; }
+    .delay-6 { animation-delay: 0.7s; }
+    .delay-7 { animation-delay: 0.8s; }
+    .delay-8 { animation-delay: 0.9s; }
+    .delay-9 { animation-delay: 1.0s; }
+    .delay-10 { animation-delay: 1.1s; }
+    .delay-11 { animation-delay: 1.2s; }
+    .delay-12 { animation-delay: 1.3s; }
+
+    /* Ultra Glassmorphic Card */
+    @keyframes cardIntro {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .profile-card {
+      background: rgba(15, 15, 20, 0.5); 
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+      border-top: 1px solid rgba(255, 255, 255, 0.25);
+      border-left: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 40px 80px rgba(0,0,0,0.9), inset 0 0 30px rgba(255,255,255,0.03); 
+      backdrop-filter: blur(20px) saturate(150%);
+      animation: cardIntro 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      border-radius: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .profile-card::before {
+      opacity: 0;
+      animation: cardLineIntro 2.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    .profile-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+      transform: skewX(-25deg);
+      animation: shineCard 6s infinite;
+      z-index: 1;
+      pointer-events: none;
+    }
+    @keyframes shineCard {
+      0% { left: -100%; }
+      20% { left: 200%; }
+      100% { left: 200%; }
+    }
+
+    /* Animated Gradient Title */
+    .hero-title {
+      font-family: 'Orbitron', monospace;
+      font-size: 2.2rem;
+      font-weight: 900;
+      background: linear-gradient(to right, #ffffff, var(--a), #00f2fe, #ffffff);
+      background-size: 300% auto;
+      color: #fff;
+      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: gradientText 4s linear infinite;
+      position: relative;
+      z-index: 2;
+      margin-bottom: 0px;
+    }
+    @keyframes gradientText {
+      0% { background-position: 0% center; }
+      100% { background-position: 300% center; }
+    }
+    
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--txm);
+      margin-bottom: 40px;
+    }
+
+    /* Ultra-Premium Social Buttons */
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+      overflow: hidden;
+      z-index: 2;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+    }
+
+    .social-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+      z-index: -1;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-6px) scale(1.04);
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .social-btn:hover::before {
+      transform: translateX(100%);
+    }
+
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      background: rgba(0, 0, 0, 0.4);
+      box-shadow: inset 0 2px 5px rgba(255,255,255,0.1);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .platform-name {
+      font-family: 'Orbitron', monospace;
+      font-size: 1.05rem;
+      font-weight: 900;
+      color: rgba(255, 255, 255, 0.85);
+      flex: 1;
+      text-align: left;
+      padding-left: 18px;
+      letter-spacing: 1.5px;
+      transition: all 0.3s;
+    }
+
+    .go-icon {
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.3);
+      padding-right: 12px;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .social-btn:hover .go-icon {
+      transform: translateX(6px) scale(1.2);
+      color: #fff;
+    }
+    
+    .social-btn:hover .icon-box {
+      transform: scale(1.1);
+    }
+
+    /* Brand Customizations */
+    .youtube:hover { border-color: rgba(255, 0, 0, 0.6); box-shadow: 0 15px 30px rgba(255,0,0,0.25), inset 0 0 15px rgba(255,0,0,0.1); }
+    .youtube:hover .icon-box { background: linear-gradient(135deg, #ff0000, #990000); color: #fff; box-shadow: 0 0 20px rgba(255,0,0,0.6); }
+    .youtube:hover .platform-name { color: #ff0000; text-shadow: 0 0 15px rgba(255,0,0,0.5); }
+    .youtube .icon-box { color: rgba(255, 0, 0, 0.8); }
+
+    .tiktok:hover { border-color: rgba(0, 242, 254, 0.6); box-shadow: 0 15px 30px rgba(0, 242, 254,0.25), inset 0 0 15px rgba(0, 242, 254,0.1); }
+    .tiktok:hover .icon-box { background: linear-gradient(135deg, #00f2fe, #4facfe); color: #fff; box-shadow: 0 0 20px rgba(0, 242, 254,0.6); }
+    .tiktok:hover .platform-name { color: #00f2fe; text-shadow: 0 0 15px rgba(0, 242, 254,0.5); }
+    .tiktok .icon-box { color: rgba(255, 255, 255, 0.8); text-shadow: 2px 2px 0px rgba(254, 9, 121, 0.8); }
+
+    .facebook:hover { border-color: rgba(24, 119, 242, 0.6); box-shadow: 0 15px 30px rgba(24, 119, 242,0.25), inset 0 0 15px rgba(24, 119, 242,0.1); }
+    .facebook:hover .icon-box { background: linear-gradient(135deg, #1877f2, #0e56b8); color: #fff; box-shadow: 0 0 20px rgba(24, 119, 242,0.6); }
+    .facebook:hover .platform-name { color: #1877f2; text-shadow: 0 0 15px rgba(24, 119, 242,0.5); }
+    .facebook .icon-box { color: rgba(24, 119, 242, 0.8); }
+
+    .instagram:hover { border-color: rgba(225, 48, 108, 0.6); box-shadow: 0 15px 30px rgba(225, 48, 108,0.25), inset 0 0 15px rgba(225, 48, 108,0.1); }
+    .instagram:hover .icon-box { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); color: #fff; box-shadow: 0 0 20px rgba(225, 48, 108,0.6); }
+    .instagram:hover .platform-name { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); -webkit-background-clip: text; color: transparent; text-shadow: none; }
+    .instagram .icon-box { color: rgba(225, 48, 108, 0.8); }
+
+    .whatsapp:hover { border-color: rgba(37, 211, 102, 0.6); box-shadow: 0 15px 30px rgba(37, 211, 102,0.25), inset 0 0 15px rgba(37, 211, 102,0.1); }
+    .whatsapp:hover .icon-box { background: linear-gradient(135deg, #25D366, #128C7E); color: #fff; box-shadow: 0 0 20px rgba(37, 211, 102,0.6); }
+    .whatsapp:hover .platform-name { color: #25D366; text-shadow: 0 0 15px rgba(37, 211, 102,0.5); }
+    .whatsapp .icon-box { color: rgba(37, 211, 102, 0.8); }
+
+    .discord:hover { border-color: rgba(88, 101, 242, 0.6); box-shadow: 0 15px 30px rgba(88, 101, 242,0.25), inset 0 0 15px rgba(88, 101, 242,0.1); }
+    .discord:hover .icon-box { background: linear-gradient(135deg, #5865F2, #4752C4); color: #fff; box-shadow: 0 0 20px rgba(88, 101, 242,0.6); }
+    .discord:hover .platform-name { color: #5865F2; text-shadow: 0 0 15px rgba(88, 101, 242,0.5); }
+    .discord .icon-box { color: rgba(88, 101, 242, 0.8); }
+
+    .telegram:hover { border-color: rgba(0, 136, 204, 0.6); box-shadow: 0 15px 30px rgba(0, 136, 204,0.25), inset 0 0 15px rgba(0, 136, 204,0.1); }
+    .telegram:hover .icon-box { background: linear-gradient(135deg, #0088cc, #005580); color: #fff; box-shadow: 0 0 20px rgba(0, 136, 204,0.6); }
+    .telegram:hover .platform-name { color: #0088cc; text-shadow: 0 0 15px rgba(0, 136, 204,0.5); }
+    .telegram .icon-box { color: rgba(0, 136, 204, 0.8); }
+
+    .twitter:hover { border-color: rgba(255, 255, 255, 0.6); box-shadow: 0 15px 30px rgba(255, 255, 255, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.05); }
+    .twitter:hover .icon-box { background: linear-gradient(135deg, #333, #000); color: #fff; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
+    .twitter:hover .platform-name { color: #fff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
+    .twitter .icon-box { color: rgba(255, 255, 255, 0.8); }
+
+    .threads:hover { border-color: rgba(255, 255, 255, 0.6); box-shadow: 0 15px 30px rgba(255, 255, 255, 0.15), inset 0 0 15px rgba(255, 255, 255, 0.05); }
+    .threads:hover .icon-box { background: linear-gradient(135deg, #000, #333); color: #fff; box-shadow: 0 0 20px rgba(255, 255, 255, 0.4); }
+    .threads:hover .platform-name { color: #fff; text-shadow: 0 0 15px rgba(255, 255, 255, 0.4); }
+    .threads .icon-box { color: rgba(255, 255, 255, 0.8); }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--txd);
+      margin-top: 40px;
+      padding-bottom: 10px;
+      letter-spacing: 3px;
+      opacity: 0.5;
+    }
+
+    .footer span {
+      color: var(--a);
+    }
+  </style>
+
+<script>
+    document.addEventListener('contextmenu', event => event.preventDefault());
+    document.onkeydown = function(e) {
+        if(e.keyCode == 123) return false;
+        if(e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 67 || e.keyCode == 74)) return false;
+        if(e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83)) return false;
+    };
+    document.onselectstart = function() { return false; };
+</script>
+<style>body { -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none; }</style>
+
+</head>
+
+<body>
+  <div class="wrap" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding: 30px 0;">
+    
+    <!-- Profile Section -->
+    <div class="card profile-card" style="width: 100%; max-width: 380px; text-align: center; display: flex; flex-direction: column; align-items: center; padding: 50px 30px;">
+      
+      <!-- Profile Logo with Premium Spinning Glow -->
+      <div class="profile-logo-wrap">
+        <img id="display-profile-pic" src="" alt="Profile" class="profile-logo-img">
+      </div>
+
+      <div class="anim-fade-up delay-1" style="margin-top: 10px; margin-bottom: 8px;">
+        <p id="display-username" style="color: var(--a); font-family: 'Share Tech Mono', monospace; font-size: 1.4rem; font-weight: bold; text-shadow: 0 0 15px rgba(255,0,51,0.6); letter-spacing: 1.5px; animation: pulseUsername 2s infinite alternate;">@devyasin</p>
+      </div>
+      <p class="hero-sub anim-fade-up delay-2" style="margin-top: 0px; margin-bottom: 35px; font-size: 1.1rem;">Welcome to my official links</p>
+
+      <!-- Premium Social Links -->
+      <div style="display: flex; flex-direction: column; gap: 18px; width: 100%;">
+        
+        <a href="https://youtube.com/@devyasin" target="_blank" class="social-btn youtube anim-fade-up delay-3">
+          <div class="icon-box"><i class="ti ti-brand-youtube"></i></div>
+          <span class="platform-name">YouTube</span>
+          <i class="ti ti-chevron-right go-icon"></i>
+        </a>
+        
+        <a href="https://tiktok.com/" target="_blank" class="social-btn tiktok anim-fade-up delay-4">
+          <div class="icon-box"><i class="ti ti-brand-tiktok"></i></div>
+          <span class="platform-name">TikTok</span>
+          <i class="ti ti-chevron-right go-icon"></i>
+        </a>
+        
+        <a href="https://facebook.com/" target="_blank" class="social-btn facebook anim-fade-up delay-5">
+          <div class="icon-box"><i class="ti ti-brand-facebook"></i></div>
+          <span class="platform-name">Facebook</span>
+          <i class="ti ti-chevron-right go-icon"></i>
+        </a>
+        
+        <a href="https://instagram.com/" target="_blank" class="social-btn instagram anim-fade-up delay-6">
+          <div class="icon-box"><i class="ti ti-brand-instagram"></i></div>
+          <span class="platform-name">Instagram</span>
+          <i class="ti ti-chevron-right go-icon"></i>
+        </a>
+        
+        <a href="https://whatsapp.com/" target="_blank" class="social-btn whatsapp anim-fade-up delay-7">
+          <div class="icon-box"><i class="ti ti-brand-whatsapp"></i></div>
+          <span class="platform-name">WhatsApp</span>
+          <i class="ti ti-chevron-right go-icon"></i>
+        </a>
+
+        <a href="https://discord.com/" target="_blank" class="social-btn discord anim-fade-up delay-8">
+          <div class="icon-box"><i class="ti ti-brand-discord"></i></div>
+          <span class="platform-name">Discord</span>
+          <i class="ti ti-chevron-right go-icon"></i>
+        </a>
+
+        <a href="https://telegram.org/" target="_blank" class="social-btn telegram anim-fade-up delay-9">
+          <div class="icon-box"><i class="ti ti-brand-telegram"></i></div>
+          <span class="platform-name">Telegram</span>
+          <i class="ti ti-chevron-right go-icon"></i>
+        </a>
+
+        <a href="https://x.com/" target="_blank" class="social-btn twitter anim-fade-up delay-10">
+          <div class="icon-box"><i class="ti ti-brand-x"></i></div>
+          <span class="platform-name">Twitter (X)</span>
+          <i class="ti ti-chevron-right go-icon"></i>
+        </a>
+
+        <a href="https://threads.net/" target="_blank" class="social-btn threads anim-fade-up delay-11">
+          <div class="icon-box"><i class="ti ti-brand-threads"></i></div>
+          <span class="platform-name">Threads</span>
+          <i class="ti ti-chevron-right go-icon"></i>
+        </a>
+        
+      </div>
+    </div>
+    <p class="footer anim-fade-up delay-12">© 2026 <span id="display-fullname">DEV YASIN</span> · ALL RIGHTS RESERVED</p>
+  </div>
+
+  <script>
+    // These lines automatically update the names on the website based on lines 8 and 9!
+    document.getElementById('page-title').textContent = config_fullname.toUpperCase() + " | Bio Links";
+    document.getElementById('display-username').textContent = config_username.toLowerCase();
+    document.getElementById('display-fullname').textContent = config_fullname.toUpperCase();
+    // This updates the profile picture based on line 10
+    document.getElementById('display-profile-pic').src = config_profile_pic;
+    
+    // Automatically make the website logo (favicon) round!
+    const faviconImg = new Image();
+    faviconImg.crossOrigin = "Anonymous";
+    faviconImg.onload = function() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 256; canvas.height = 256;
+      const ctx = canvas.getContext('2d');
+      ctx.beginPath();
+      ctx.arc(128, 128, 128, 0, Math.PI * 2);
+      ctx.clip();
+      ctx.drawImage(faviconImg, 0, 0, faviconImg.width, faviconImg.height, 0, 0, 256, 256);
+      try {
+        document.getElementById('page-favicon').href = canvas.toDataURL();
+      } catch (e) {
+        document.getElementById('page-favicon').href = config_profile_pic; // Fallback
+      }
+    };
+    faviconImg.onerror = () => document.getElementById('page-favicon').href = config_profile_pic;
+    faviconImg.src = config_profile_pic;
+  </script>
+</body>
+</html>
