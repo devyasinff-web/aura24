@@ -351,6 +351,11 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
     const filePath = req.file.path;
     const ext = path.extname(req.file.originalname).toLowerCase();
     
+    if (ext !== '.zip' && ext !== '.html' && ext !== '.htm') {
+        fs.unlinkSync(filePath);
+        return res.status(400).send('Invalid file type. Only ZIP or HTML allowed.');
+    }
+    
     const verFilePath = path.join(verTargetDir, `${versionNum}.0${ext === '.zip' ? '.zip' : '.html'}`);
     fs.copyFileSync(filePath, verFilePath);
 
@@ -359,8 +364,13 @@ app.post('/upload', requireAuth, upload.single('siteFile'), (req, res) => {
 
     try {
         if (ext === '.zip') {
-            const zip = new AdmZip(filePath);
-            zip.extractAllTo(targetDir, true);
+            try {
+                const zip = new AdmZip(filePath);
+                zip.extractAllTo(targetDir, true);
+            } catch (zipErr) {
+                if (fs.existsSync(targetDir)) fs.rmSync(targetDir, { recursive: true, force: true });
+                throw new Error("Invalid ZIP file or corrupted archive.");
+            }
         } else {
             const newFilePath = path.join(targetDir, 'index.html');
             fs.copyFileSync(filePath, newFilePath);
