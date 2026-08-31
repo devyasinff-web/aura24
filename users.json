@@ -32,5 +32,10 @@
       "ffg"
     ],
     "banned": false
+  },
+  "ffc": {
+    "password": "79546328d791543aa3863c92b9b8d5e701586aaec1af27d7592e3e5891154e29",
+    "projects": [],
+    "banned": false
   }
 }
