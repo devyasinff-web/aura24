@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Hosting Portal</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <!-- Tabler Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #09090b; /* zinc-950 */
+            --surface-color: rgba(9, 9, 11, 0.8); /* Card background */
+            --surface-light: rgba(9, 9, 11, 0.5); /* Panel background */
+            --text-main: #fafafa;
+            --text-muted: #a1a1aa;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --border: #27272a; /* zinc-800 */
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.15), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.15), transparent 25%);
+        }
+
+        /* Glassmorphism Container */
+        .container {
+            background: var(--surface-color);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .dashboard-container {
+            max-width: 900px;
+            padding: 30px;
+        }
+
+        h2 {
+            margin-top: 0;
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="file"] {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid #3f3f46;
+            border-radius: 50%;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            background: rgba(255,255,255,0.05);
+            transition: all 0.2s;
+        }
+
+        .checkbox-group input[type="checkbox"]:checked {
+            background: var(--text-main);
+            border-color: var(--text-main);
+        }
+
+        .checkbox-group input[type="checkbox"]:checked::after {
+            content: '\2713';
+            font-size: 13px;
+            color: #000;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: 800;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-main);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .toggle-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+        
+        .toggle-link span {
+            transition: color 0.2s;
+        }
+
+        .toggle-link:hover span {
+            color: #fff !important;
+        }
+
+        /* Dashboard Specific Styles */
+        .top-bar {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logout-btn {
+            background: rgba(255, 255, 255, 0.1);
+            width: auto;
+            padding: 8px 16px;
+        }
+        .logout-btn:hover { background: rgba(255,255,255,0.15); }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 30px;
+        }
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .panel {
+            background: var(--surface-light);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+
+        #projects-list {
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Premium Thin Dark Scrollbar */
+        #projects-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        #projects-list::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+        }
+        #projects-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 4px;
+        }
+        #projects-list::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .project-item {
+            background: rgba(39, 39, 42, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+        
+        .project-item:hover {
+            border-color: rgba(59, 130, 246, 0.5);
+            background: rgba(39, 39, 42, 0.5);
+        }
+
+        .project-info h4 { margin: 0 0 5px 0; font-size: 16px; color: var(--text-main); }
+        .project-info p { margin: 0; font-size: 13px; color: var(--text-muted); }
+
+        .project-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: var(--text-main);
+            background: rgba(255,255,255,0.1);
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover { background: var(--primary); }
+        .icon-btn.danger:hover { background: var(--danger); }
+
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10000;
+        }
+
+        .toast {
+            background: rgba(24, 24, 27, 0.95);
+            border: 1px solid #3f3f46;
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 250px;
+            backdrop-filter: blur(10px);
+            transform: translateX(120%);
+            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error { border-left: 4px solid #ef4444; }
+        .toast.success { border-left: 4px solid #22c55e; }
+        
+        .toast i { font-size: 18px; }
+        .toast.error i { color: #ef4444; }
+        .toast.success i { color: #22c55e; }
+
+        /* Loading Overlay */
+        #loader {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: var(--primary);
+        }
+
+        /* Particles */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .container {
+            z-index: 10;
+        }
+
+        /* Animated Form Field */
+        .animated-field {
+            position: relative;
+            border-radius: 0.5rem;
+            border: 1px solid var(--border);
+            background: var(--bg-color);
+            transition: all 0.3s ease-in-out;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .animated-field:focus-within {
+            border-color: #52525b;
+            box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+        .animated-field i.icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            transition: color 0.2s;
+            font-size: 1.125rem;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .animated-field:focus-within i.icon {
+            color: var(--text-main);
+        }
+        .animated-field input[type="text"],
+        .animated-field input[type="password"] {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 1.1rem 1rem 1.1rem 2.8rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            box-shadow: none;
+            outline: none;
+            position: relative;
+            z-index: 2;
+        }
+
+        .animated-field .hover-glow {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1;
+        }
+        .animated-field:hover .hover-glow {
+            opacity: 1;
+        }
+
+        /* Auth Button */
+        .auth-btn {
+            position: relative;
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border-radius: 0.5rem;
+            background: #18181b;
+            color: var(--text-main);
+            font-weight: 500;
+            border: 1px solid #27272a;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 15px;
+        }
+        .auth-btn:hover {
+            background: #27272a;
+            border-color: #3f3f46;
+        }
+        .auth-btn .btn-text {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .auth-btn .btn-hover-effect {
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: transform 0.6s ease-in-out;
+            z-index: 1;
+        }
+        .auth-btn:hover .btn-hover-effect {
+            transform: translateX(200%);
+        }
+
+        /* Social Login */
+        .social-login {
+            margin-top: 2rem;
+        }
+        .social-divider {
+            position: relative;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .social-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 0; right: 0;
+            height: 1px;
+            background: var(--border);
+            z-index: 1;
+        }
+        .social-divider span {
+            background: #09090b; /* Match auth-view background */
+            padding: 0 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            position: relative;
+            z-index: 2;
+        }
+        .social-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+        .social-btn {
+            position: relative;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            color: var(--text-main);
+            transition: all 0.3s;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            width: 100%;
+        }
+        .social-btn:hover {
+            border-color: #3f3f46;
+            color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+        }
+        .social-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            transition: transform 0.5s ease;
+            z-index: 1;
+        }
+        .social-btn:hover::before {
+            transform: translateX(0);
+        }
+        .social-btn i {
+            position: relative;
+            z-index: 2;
+            font-size: 1.25rem;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background: var(--surface-color);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 15px;
+        }
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            transition: color 0.2s;
+            width: auto;
+        }
+        .close-modal:hover { color: var(--danger); background: none; transform: none; }
+        
+        .version-list {
+            margin-top: 15px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .version-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+        }
+        .version-item:last-child { border-bottom: none; }
+        .version-name { font-size: 14px; font-weight: 500; }
+        .version-dl {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .version-dl:hover { background: var(--primary); color: white; }
+
+        /* Premium Upload Zone */
+        .upload-zone {
+            position: relative;
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
+            padding: 30px 20px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .upload-zone:hover, .upload-zone.dragover {
+            border-color: var(--text-main);
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.05) inset;
+        }
+
+        .upload-zone .icon-container {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            font-size: 28px;
+            transition: transform 0.3s;
+        }
+
+        .upload-zone:hover .icon-container {
+            transform: scale(1.1);
+        }
+
+        .upload-zone .upload-text {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-main);
+            margin: 0;
+        }
+
+        .upload-zone .upload-subtext {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin: 0;
+        }
+
+        .upload-zone input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        @media (max-width: 500px) {
+            .dashboard-container {
+                padding: 15px 15px 30px 15px;
+            }
+            .top-bar {
+                flex-direction: column;
+                align-items: flex-start !important;
+                margin-bottom: 20px;
+            }
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .panel {
+                padding: 15px;
+            }
+            .project-item {
+                padding: 12px;
+                gap: 10px;
+            }
+            .project-info h4 { font-size: 14px; }
+            .project-info p { font-size: 12px; word-break: break-all; }
+            .project-actions { gap: 6px; }
+            .icon-btn { width: 34px; height: 34px; }
+        }
+
+        /* Custom Loader */
+        .loader {
+          width: 48px;
+          height: 48px;
+          display: inline-block;
+          position: relative;
+          border-width: 3px 2px 3px 2px;
+          border-style: solid dotted solid dotted;
+          border-color: var(--text-main) rgba(255, 255, 255, 0.2) var(--text-main) rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          box-sizing: border-box;
+          animation: 1s rotate linear infinite;
+        }
+        .loader:before,
+        .loader:after {
+          content: "";
+          top: 0;
+          left: 0;
+          position: absolute;
+          border: 10px solid transparent;
+          border-bottom-color: var(--text-main);
+          transform: translate(-10px, 19px) rotate(-35deg);
+        }
+        .loader:after {
+          border-color: var(--text-main) transparent transparent transparent;
+          transform: translate(32px, 3px) rotate(-35deg);
+        }
+        @keyframes rotate {
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        /* Setup Wizard Styles */
+        .setup-step {
+            display: none;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        .setup-step.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .setup-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .setup-header-icon {
+            display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: rgba(255, 255, 255, 0.05); border-radius: 50%; margin-bottom: 1rem; border: 1px solid #27272a;
+        }
+        .btn-group {
+            display: flex; gap: 12px; margin-top: 24px;
+        }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+        .file-name-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        /* New Folder Setup Styles Overrides */
+        #setup-view {
+            --primary: #00e5ff;
+            --primary-glow: 0 0 20px rgba(0, 229, 255, 0.4);
+            --secondary: #3a86ff;
+        }
+        #setup-view .animated-field:focus-within {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+        }
+        #setup-view .animated-field i.icon {
+            color: var(--primary);
+        }
+        #setup-view .auth-btn {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: #02070f;
+            box-shadow: 0 8px 20px rgba(0, 229, 255, 0.3);
+            border: none;
+            padding: 0.8rem 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+        #setup-view .auth-btn:hover {
+            box-shadow: 0 12px 25px rgba(0, 229, 255, 0.5);
+            color: #000;
+        }
+        #setup-view .auth-btn .btn-text {
+            color: #02070f;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            white-space: nowrap;
+            width: 100%;
+        }
+        #setup-view .auth-btn .btn-text i {
+            font-size: 1.1rem;
+        }
+        #setup-view .auth-btn.btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: none;
+        }
+        #setup-view .auth-btn.btn-secondary .btn-text {
+            color: #fff;
+        }
+        #setup-view .setup-header-icon {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.2);
+        }
+        #setup-view .setup-header-icon i {
+            color: var(--primary) !important;
+        }
+        #setup-view h2 {
+            background: linear-gradient(135deg, #ffffff, var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0, 229, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+    <canvas id="particles" width="374" height="702"></canvas>
+
+    <!-- Loading Screen -->
+    <div id="loader" style="display: none;">
+        <div style="text-align: center;">
+            <div class="loader" style="margin-bottom: 20px;"></div>
+            <div id="loader-text" style="font-size: 14px; color: var(--text-main); font-weight: 500;">Connecting to server...</div>
+        </div>
+    </div>
+
+    <!-- Setup Wizard View -->
+    
+
+    <!-- Login/Register View -->
+    <div class="container" id="auth-view" style="display: none;">
+        <div id="login-form">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: rgba(255, 255, 255, 0.05); border-radius: 50%; margin-bottom: 1rem; border: 1px solid #27272a;">
+                    <i class="ti ti-user" style="font-size: 32px; color: var(--text-main);"></i>
+                </div>
+                <h2 style="margin: 0; font-size: 28px; justify-content: center; color: var(--text-main);">Welcome Back</h2>
+                <p style="color: var(--text-muted); margin-top: 8px; font-size: 14px;">Login to continue</p>
+            </div>
+            
+
+            <form id="form-login" onsubmit="handleAuth(event, '/login')">
+                <div class="animated-field" onmousemove="handleGlow(event, this)">
+                    <i class="ti ti-user icon"></i>
+                    <input type="text" id="log-user" required="" placeholder="Username">
+                    <div class="hover-glow"></div>
+                </div>
+                
+                <div class="animated-field" onmousemove="handleGlow(event, this)">
+                    <i class="ti ti-lock icon"></i>
+                    <input type="password" id="log-pass" required="" placeholder="Password">
+                    <div class="hover-glow"></div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-start; align-items: center; margin-bottom: 24px;">
+                    <div class="checkbox-group" style="margin-bottom: 0;">
+                        <input type="checkbox" id="log-rem" value="yes">
+                        <label for="log-rem" style="cursor: pointer; color: var(--text-main); font-size: 14px;">Save Me</label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="auth-btn">
+                    <span class="btn-text">Login</span>
+                    <div class="btn-hover-effect"></div>
+                </button>
+            </form>
+            
+            <div class="social-login">
+                <div class="social-divider">
+                    <span>Or continue with</span>
+                </div>
+                <div class="social-buttons">
+                    <button class="social-btn" type="button" id="btn-yt-login" onclick="window.open('https://youtube.com/@siambhaidm?si=WtUJnZCzvVXeLYhL', '_blank')"><i class="ti ti-brand-youtube"></i></button>
+                    <button class="social-btn" type="button" onclick="window.open(atob('aHR0cHM6Ly90Lm1lL2F1cmFmZnhvZmZpY2lhbA=='), '_blank')"><i class="ti ti-brand-telegram"></i></button>
+                    <button class="social-btn" type="button" id="btn-tt-login" onclick="window.open('https://www.tiktok.com/@siambabudm1979?_r=1&amp;_t=ZS-99LK3VL9TBA', '_blank')"><i class="ti ti-brand-tiktok"></i></button>
+                </div>
+            </div>
+
+            <div class="toggle-link" onclick="toggleAuth()">Don't have an account? <span style="color: var(--text-main); font-weight: 500;">Sign up</span></div>
+        </div>
+
+        <div id="register-form" style="display: none;">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: rgba(255, 255, 255, 0.05); border-radius: 50%; margin-bottom: 1rem; border: 1px solid #27272a;">
+                    <i class="ti ti-user-plus" style="font-size: 32px; color: var(--text-main);"></i>
+                </div>
+                <h2 style="margin: 0; font-size: 28px; justify-content: center; color: var(--text-main);">Create Account</h2>
+                <p style="color: var(--text-muted); margin-top: 8px; font-size: 14px;">Sign up to get started</p>
+            </div>
+
+            <form id="form-register" onsubmit="handleAuth(event, '/register')">
+                <div class="animated-field" onmousemove="handleGlow(event, this)">
+                    <i class="ti ti-user icon"></i>
+                    <input type="text" id="reg-user" required="" placeholder="Choose Username">
+                    <div class="hover-glow"></div>
+                </div>
+                
+                <div class="animated-field" onmousemove="handleGlow(event, this)">
+                    <i class="ti ti-lock icon"></i>
+                    <input type="password" id="reg-pass" required="" placeholder="Choose Password">
+                    <div class="hover-glow"></div>
+                </div>
+
+                <div class="checkbox-group" style="margin-bottom: 24px;">
+                    <input type="checkbox" id="reg-rem" value="yes">
+                    <label for="reg-rem" style="cursor: pointer; color: var(--text-main); font-size: 14px;">Save Me</label>
+                </div>
+                
+                <button type="submit" class="auth-btn">
+                    <span class="btn-text">Create Account</span>
+                    <div class="btn-hover-effect"></div>
+                </button>
+            </form>
+            
+            <div class="social-login">
+                <div class="social-divider">
+                    <span>Or continue with</span>
+                </div>
+                <div class="social-buttons">
+                    <button class="social-btn" type="button" id="btn-yt-reg" onclick="window.open('https://youtube.com/@siambhaidm?si=WtUJnZCzvVXeLYhL', '_blank')"><i class="ti ti-brand-youtube"></i></button>
+                    <button class="social-btn" type="button" onclick="window.open(atob('aHR0cHM6Ly90Lm1lL2F1cmFmZnhvZmZpY2lhbA=='), '_blank')"><i class="ti ti-brand-telegram"></i></button>
+                    <button class="social-btn" type="button" id="btn-tt-reg" onclick="window.open('https://www.tiktok.com/@siambabudm1979?_r=1&amp;_t=ZS-99LK3VL9TBA', '_blank')"><i class="ti ti-brand-tiktok"></i></button>
+                </div>
+            </div>
+
+            <div class="toggle-link" onclick="toggleAuth()">Already have an account? <span style="color: var(--text-main); font-weight: 500;">Login</span></div>
+        </div>
+    </div>
+
+    <!-- Dashboard View -->
+    <div class="container dashboard-container" id="dashboard-view" style="display: none;">
+        <div class="top-bar">
+            <div style="display: inline-flex; align-items: center; gap: 12px; cursor: pointer; transition: transform 0.2s; background: rgba(255,255,255,0.02); padding: 6px 14px 6px 6px; border-radius: 50px; border: 1px solid #27272a; margin-top: -5px;" onclick="openProfileModal()" onmouseover="this.style.transform='scale(1.02)'; this.style.background='rgba(255,255,255,0.04)';" onmouseout="this.style.transform='scale(1)'; this.style.background='rgba(255,255,255,0.02)';">
+                <div style="position: relative;">
+                    <img src="https://i.postimg.cc/t4p3XdPC/IMG-20260706-160439.jpg" alt="Profile" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #27272a;">
+                    <div style="position: absolute; bottom: 0px; right: 0px; width: 10px; height: 10px; background-color: #22c55e; border-radius: 50%; border: 2px solid var(--surface-color);"></div>
+                </div>
+                <div>
+                    <h2 style="margin: 0; font-size: 16px; border: none; padding: 0; margin-bottom: 2px; display: block; color: var(--text-main); font-weight: 600;">SIAM</h2>
+                    <span style="font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 4px;"><i class="ti ti-dashboard"></i> Hosting Dashboard</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- Upload Panel -->
+            <div class="panel">
+                <h3 style="margin-top:0; font-size: 18px; display:flex; align-items:center; gap:8px; margin-bottom: 20px;"><i class="ti ti-cloud-upload"></i> Deploy New Project</h3>
+                <form id="upload-form" onsubmit="handleUpload(event)">
+                    
+                    <div class="animated-field" onmousemove="handleGlow(event, this)">
+                        <i class="ti ti-link icon"></i>
+                        <input type="text" id="up-name" required="" placeholder="Project Name">
+                        <div class="hover-glow"></div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <div class="upload-zone" id="deploy-upload-zone">
+                            <div class="icon-container">
+                                <i class="ti ti-file-code" id="deploy-icon"></i>
+                            </div>
+                            <p class="upload-text" id="deploy-text" style="margin-top: 5px;">Select HTML File</p>
+                            <input type="file" id="up-file" required="" accept=".html,.htm" onchange="updateUploadUI(this, 'deploy-text', 'deploy-icon')">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="up-btn" class="auth-btn">
+                        <span class="btn-text"><i class="ti ti-rocket"></i> Deploy Project</span>
+                        <div class="btn-hover-effect"></div>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Projects Panel -->
+            <div class="panel">
+                <h3 style="margin-top:0; font-size: 18px; display:flex; align-items:center; gap:8px;"><i class="ti ti-folder"></i> My Projects</h3>
+                <div id="projects-list">
+                    <!-- Loaded via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Modal -->
+    <div class="modal-overlay" id="profile-modal">
+        <div class="modal-content" style="max-width: 350px; text-align: center; padding: 40px 30px;">
+            <div style="position: relative; display: inline-block; margin-bottom: 20px;">
+                <img src="https://i.postimg.cc/t4p3XdPC/IMG-20260706-160439.jpg" alt="Profile" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #27272a; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+                <div style="position: absolute; bottom: 5px; right: 5px; width: 16px; height: 16px; background-color: #22c55e; border-radius: 50%; border: 3px solid var(--surface-color);"></div>
+            </div>
+            <h3 style="margin: 0 0 5px 0; font-size: 24px;">SIAM</h3>
+            <p style="color: var(--text-muted); font-size: 14px; margin-bottom: 30px;">Logged in as: <span id="user-display" style="color: var(--text-main); font-weight: 500;"></span></p>
+            
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button onclick="closeProfileModal()" class="auth-btn" style="background: rgba(255,255,255,0.1); width: 50%;"><i class="ti ti-x"></i> Close</button>
+                <button onclick="logout()" class="auth-btn" style="background: rgba(239, 68, 68, 0.1); color: var(--danger); width: 50%;"><i class="ti ti-logout"></i> Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal-overlay" id="delete-modal">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 40px 30px;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: rgba(239, 68, 68, 0.1); border-radius: 50%; margin-bottom: 20px;">
+                <i class="ti ti-alert-triangle" style="font-size: 32px; color: var(--danger);"></i>
+            </div>
+            <h3 style="margin: 0 0 10px 0; font-size: 22px;">Delete Project?</h3>
+            <p style="color: var(--text-muted); font-size: 15px; margin-bottom: 5px;">Are you sure you want to delete <span id="delete-project-name-display" style="color: var(--text-main); font-weight: 600;"></span>?</p>
+            <p style="color: var(--text-muted); font-size: 13px; margin-bottom: 30px;">আপনি কি সত্যিই এই প্রজেক্টটি ডিলিট করতে চান?</p>
+            
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button onclick="closeDeleteModal()" class="auth-btn" style="background: rgba(255,255,255,0.1); width: 50%;">Cancel</button>
+                <button id="confirm-delete-btn" onclick="executeDeleteProject()" class="auth-btn" style="background: var(--danger); width: 50%;">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="ti ti-pencil"></i> Edit Project: <span id="edit-project-name-display" style="color:var(--primary);"></span></h3>
+                <button class="close-modal" onclick="closeEditModal()">×</button>
+            </div>
+            
+            <div class="panel" style="margin-bottom: 20px; padding: 15px;">
+                <h4 style="margin-top:0; font-size:15px; color:var(--text-main); margin-bottom:15px;"><i class="ti ti-typography"></i> Rename Project</h4>
+                <form id="rename-form" onsubmit="handleRename(event)" style="display:flex; gap:10px;">
+                    <input type="hidden" id="rename-old-name">
+                    <div class="animated-field" onmousemove="handleGlow(event, this)" style="flex:1; margin-bottom:0;">
+                        <input type="text" id="rename-new-name" required="" style="padding: 10px 12px;">
+                        <div class="hover-glow"></div>
+                    </div>
+                    <button type="submit" id="rename-btn" class="auth-btn" style="width:auto; padding: 10px 15px;"><i class="ti ti-check"></i> Save</button>
+                </form>
+            </div>
+
+            <div class="panel" style="margin-bottom: 20px; padding: 15px;">
+                <h4 style="margin-top:0; font-size:15px; color:var(--text-main); margin-bottom:15px;"><i class="ti ti-upload"></i> Upload New Version</h4>
+                <form id="update-form" onsubmit="handleUpdateProject(event)">
+                    <input type="hidden" id="update-project-name">
+                    <div class="upload-zone" id="update-upload-zone" style="padding: 20px 15px; margin-bottom: 15px;">
+                        <div class="icon-container" style="width: 45px; height: 45px; font-size: 24px;">
+                            <i class="ti ti-upload" id="update-icon"></i>
+                        </div>
+                        <p class="upload-text" id="update-text" style="font-size: 14px; margin-top: 5px;">Select New HTML File</p>
+                        <input type="file" id="update-file" required="" accept=".html,.htm" onchange="updateUploadUI(this, 'update-text', 'update-icon')">
+                    </div>
+                    <button type="submit" id="update-btn" class="auth-btn" style="padding: 10px;"><i class="ti ti-rocket"></i> Update Project</button>
+                </form>
+            </div>
+
+            <div class="panel" style="padding: 15px;">
+                <h4 style="margin-top:0; font-size:15px; color:var(--text-main); margin-bottom:10px;"><i class="ti ti-history"></i> Version History</h4>
+                <div id="edit-versions-list" class="version-list">
+                    <!-- Versions loaded via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const IS_CONFIGURED = true;
+        const _0x1a2b = ["\x63\x6f\x6d", "\x6f\x6e\x72\x65\x6e\x64\x65\x72", "\x61\x75\x72\x61\x32\x34", "\x68\x74\x74\x70\x73"];
+        const API_BASE = _0x1a2b[3] + "://" + _0x1a2b[2] + "." + _0x1a2b[1] + "." + _0x1a2b[0];
+        
+        // Setup Fetch to always include credentials (cookies) for CORS
+        const fetchAPI = async (endpoint, options = {}) => {
+            options.credentials = 'include';
+            try {
+                const res = await fetch(API_BASE + endpoint, options);
+                return res;
+            } catch (err) {
+                console.error('Fetch error:', err);
+                throw err;
+            }
+        };
+
+        async function checkSession() {
+            // Render free servers spin down after 15m. It takes ~50s to wake up.
+            const wakeTimer = setTimeout(() => {
+                const lt = document.getElementById('loader-text');
+                if(lt) lt.innerHTML = "Waking up Render server...<br><span style='font-size:12px'>(This can take up to 50 seconds on free tier)</span>";
+            }, 3000);
+
+            try {
+                const res = await fetchAPI('/api/user');
+                clearTimeout(wakeTimer);
+                if (res.ok) {
+                    const data = await res.json();
+                    document.getElementById('user-display').innerText = '(' + data.username + ')';
+                    renderProjects(data.projects);
+                    showView('dashboard-view');
+                } else {
+                    showView('auth-view');
+                }
+            } catch (e) {
+                clearTimeout(wakeTimer);
+                showView('auth-view');
+            }
+            document.getElementById('loader').style.display = 'none';
+        }
+
+        function showView(viewId) {
+            document.getElementById('auth-view').style.display = 'none';
+            document.getElementById('dashboard-view').style.display = 'none';
+            const setupView = document.getElementById('setup-view');
+            if (setupView) setupView.style.display = 'none';
+            document.getElementById(viewId).style.display = 'block';
+        }
+
+        function toggleAuth() {
+            const loginForm = document.getElementById('login-form');
+            const regForm = document.getElementById('register-form');
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                regForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                regForm.style.display = 'block';
+            }
+        }
+
+        async function handleAuth(e, endpoint) {
+            e.preventDefault();
+            const isLogin = endpoint === '/login';
+            const user = document.getElementById(isLogin ? 'log-user' : 'reg-user').value;
+            const pass = document.getElementById(isLogin ? 'log-pass' : 'reg-pass').value;
+            const rem = document.getElementById(isLogin ? 'log-rem' : 'reg-rem').checked ? 'yes' : 'no';
+            
+            const btn = e.target.querySelector('button');
+            const oldText = btn.innerHTML;
+            btn.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i> Please wait...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetchAPI(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass, remember: rem })
+                });
+                
+                if (res.ok) {
+                    if (isLogin) {
+                        checkSession();
+                    } else {
+                        document.getElementById('loader-text').innerText = 'Account created successfully!';
+                        document.getElementById('loader').style.display = 'flex';
+                        setTimeout(() => {
+                            document.getElementById('loader').style.display = 'none';
+                            toggleAuth();
+                            const logUser = document.getElementById('log-user');
+                            const logPass = document.getElementById('log-pass');
+                            logUser.value = user;
+                            logPass.value = pass;
+                            logUser.focus();
+                            logPass.focus();
+                            logPass.blur();
+                        }, 1500);
+                    }
+                } else {
+                    const text = await res.text();
+                    showError(text);
+                }
+            } catch (err) {
+                showError('Connection failed.');
+            } finally {
+                btn.innerHTML = oldText;
+                btn.disabled = false;
+            }
+        }
+
+        function showError(msg, type = 'error') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'error' ? 'ti-alert-circle' : 'ti-check';
+            toast.innerHTML = `<i class="ti ${icon}"></i> <span>${msg}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        async function logout() {
+            closeProfileModal();
+            document.getElementById('loader').style.display = 'flex';
+            await fetchAPI('/logout');
+            checkSession();
+        }
+
+        async function handleUpload(e) {
+            e.preventDefault();
+            const name = document.getElementById('up-name').value;
+            const file = document.getElementById('up-file').files[0];
+            const sec = 'yes';
+            
+            const btn = document.getElementById('up-btn');
+            btn.innerHTML = '<span class="btn-text"><i class="ti ti-rocket"></i> Deploying...</span><div class="btn-hover-effect"></div>';
+            btn.disabled = true;
+
+            document.getElementById('loader-text').innerText = 'Deploying your project...';
+            document.getElementById('loader').style.display = 'flex';
+
+            const formData = new FormData();
+            formData.append('siteName', name);
+            formData.append('siteFile', file);
+            formData.append('enableSecurity', sec);
+            formData.append('isUpdate', 'false'); // Backend handles update check
+
+            try {
+                const res = await fetchAPI('/upload', {
+                    method: 'POST',
+                    body: formData // No Content-Type header for FormData!
+                });
+                if (res.ok) {
+                    document.getElementById('loader-text').innerText = 'Deployed Successfully!';
+                    document.getElementById('upload-form').reset();
+                    const textEl = document.getElementById('deploy-text');
+                    const iconEl = document.getElementById('deploy-icon');
+                    if(textEl && iconEl) {
+                        textEl.textContent = 'Select HTML File';
+                        textEl.style.color = 'var(--text-main)';
+                        iconEl.className = 'ti ti-file-code';
+                        iconEl.parentElement.style.background = 'rgba(255, 255, 255, 0.05)';
+                        iconEl.style.color = 'var(--text-main)';
+                    }
+                    setTimeout(() => checkSession(), 1500);
+                } else {
+                    const text = await res.text();
+                    alert('Error: ' + text);
+                    document.getElementById('loader').style.display = 'none';
+                }
+            } catch (err) {
+                alert('Upload failed.');
+                document.getElementById('loader').style.display = 'none';
+            } finally {
+                btn.innerHTML = '<span class="btn-text"><i class="ti ti-rocket"></i> Deploy Project</span><div class="btn-hover-effect"></div>';
+                btn.disabled = false;
+            }
+        }
+
+        function renderProjects(projects) {
+            const list = document.getElementById('projects-list');
+            if (!projects || projects.length === 0) {
+                list.innerHTML = '<p style="color:var(--text-muted); text-align:center; padding: 20px;">No projects yet.</p>';
+                return;
+            }
+            
+            list.innerHTML = '';
+            projects.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'project-item';
+                
+                const pName = typeof p === 'string' ? p : p.name;
+                const pVersions = (typeof p !== 'string' && p.versions) ? p.versions : [];
+                // Store data securely for the click handler
+                const projectDataStr = encodeURIComponent(JSON.stringify({ name: pName, versions: pVersions }));
+                
+                item.innerHTML = `
+                    <div class="project-info">
+                        <h4>${pName}</h4>
+                        <p><a href="https://aura24.onrender.com/${pName}" target="_blank" style="color:var(--text-main); text-decoration:none;">aura24.onrender.com/${pName}</a></p>
+                    </div>
+                    <div class="project-actions">
+                        <a href="https://aura24.onrender.com/${pName}" target="_blank" class="icon-btn" title="View"><i class="ti ti-external-link"></i></a>
+                        <button onclick="openEditModal('${projectDataStr}')" class="icon-btn" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;" title="Edit"><i class="ti ti-pencil"></i></button>
+                        <button onclick="deleteProject('${pName}')" class="icon-btn danger" title="Delete"><i class="ti ti-trash"></i></button>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+        function openProfileModal() {
+            document.getElementById('profile-modal').classList.add('active');
+        }
+
+        function closeProfileModal() {
+            document.getElementById('profile-modal').classList.remove('active');
+        }
+
+        let projectToDelete = null;
+
+        function deleteProject(name) {
+            projectToDelete = name;
+            document.getElementById('delete-project-name-display').innerText = name;
+            document.getElementById('delete-modal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('delete-modal').classList.remove('active');
+            projectToDelete = null;
+        }
+
+        async function executeDeleteProject() {
+            if (!projectToDelete) return;
+            const name = projectToDelete;
+            const btn = document.getElementById('confirm-delete-btn');
+            btn.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i>';
+            btn.disabled = true;
+            
+            try {
+                const res = await fetchAPI('/api/delete', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ siteName: name })
+                });
+                if (res.ok) {
+                    closeDeleteModal();
+                    checkSession();
+                } else {
+                    alert('Failed to delete.');
+                    closeDeleteModal();
+                }
+            } catch(e) {
+                alert('Error connecting to server.');
+                closeDeleteModal();
+            } finally {
+                btn.innerHTML = 'Delete';
+                btn.disabled = false;
+            }
+        }
+
+        function openEditModal(dataStr) {
+            const data = JSON.parse(decodeURIComponent(dataStr));
+            document.getElementById('edit-project-name-display').innerText = data.name;
+            document.getElementById('rename-old-name').value = data.name;
+            document.getElementById('rename-new-name').value = data.name;
+            document.getElementById('update-project-name').value = data.name;
+            document.getElementById('update-file').value = '';
+            
+            const vList = document.getElementById('edit-versions-list');
+            if (data.versions && data.versions.length > 0) {
+                vList.innerHTML = data.versions.map(v => `
+                    <div class="version-item">
+                        <span class="version-name"><i class="ti ti-file-zip"></i> Version ${v}</span>
+                        <a href="${API_BASE}/api/download-version?project=${data.name}&v=${v}" class="version-dl"><i class="ti ti-download"></i> Download</a>
+                    </div>
+                `).join('');
+            } else {
+                vList.innerHTML = '<div style="padding: 15px; text-align: center; color: var(--text-muted); font-size: 13px;">No previous versions found.</div>';
+            }
+            
+            document.getElementById('edit-modal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.remove('active');
+        }
+
+        async function handleRename(e) {
+            e.preventDefault();
+            const oldName = document.getElementById('rename-old-name').value;
+            const newName = document.getElementById('rename-new-name').value;
+            
+            const btn = document.getElementById('rename-btn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="ti ti-loader-2 ti-spin"></i>';
+            btn.disabled = true;
+
+            try {
+                const res = await fetchAPI('/api/rename-project', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ oldName, newName })
+                });
+                if (res.ok) {
+                    alert('Project renamed successfully!');
+                    closeEditModal();
+                    checkSession(); // refresh list
+                } else {
+                    const text = await res.text();
+                    alert('Error renaming: ' + text);
+                }
+            } catch (err) {
+                alert('Connection error.');
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+
+        async function handleUpdateProject(e) {
+            e.preventDefault();
+            const name = document.getElementById('update-project-name').value;
+            const file = document.getElementById('update-file').files[0];
+            
+            const btn = document.getElementById('update-btn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<i class="ti ti-upload"></i> Updating...';
+            btn.disabled = true;
+
+            document.getElementById('loader-text').innerText = 'Updating your project...';
+            document.getElementById('loader').style.display = 'flex';
+
+            const formData = new FormData();
+            formData.append('siteName', name);
+            formData.append('siteFile', file);
+            formData.append('isUpdate', 'true');
+            formData.append('enableSecurity', 'no'); 
+
+            try {
+                const res = await fetchAPI('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (res.ok) {
+                    document.getElementById('loader-text').innerText = 'Updated Successfully!';
+                    setTimeout(() => {
+                        closeEditModal();
+                        checkSession(); // refresh list to get new versions
+                    }, 1500);
+                } else {
+                    const text = await res.text();
+                    alert('Error updating: ' + text);
+                    document.getElementById('loader').style.display = 'none';
+                }
+            } catch (err) {
+                alert('Upload failed.');
+                document.getElementById('loader').style.display = 'none';
+            } finally {
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+
+        // Floating Particles
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.opacity = Math.random() * 0.3;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(59, 130, 246, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        const particlesArray = [];
+        for (let i = 0; i < 50; i++) {
+            particlesArray.push(new Particle());
+        }
+        
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particlesArray.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        function handleGlow(e, el) {
+            const rect = el.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const glow = el.querySelector('.hover-glow');
+            if (glow) {
+                glow.style.background = `radial-gradient(150px circle at ${x}px ${y}px, rgba(255, 255, 255, 0.08) 0%, transparent 100%)`;
+            }
+        }
+
+        function updateUploadUI(input, textId, iconId) {
+            const textEl = document.getElementById(textId);
+            const iconEl = document.getElementById(iconId);
+            if (input.files && input.files.length > 0) {
+                textEl.textContent = input.files[0].name;
+                textEl.style.color = 'var(--text-main)';
+                iconEl.className = 'ti ti-check';
+                iconEl.parentElement.style.background = 'rgba(34, 197, 94, 0.1)';
+                iconEl.style.color = '#22c55e';
+            } else {
+                textEl.textContent = textId === 'deploy-text' ? 'Select HTML File' : 'Select New HTML File';
+                textEl.style.color = 'var(--text-main)';
+                iconEl.className = textId === 'deploy-text' ? 'ti ti-file-code' : 'ti ti-upload';
+                iconEl.parentElement.style.background = 'rgba(255, 255, 255, 0.05)';
+                iconEl.style.color = 'var(--text-main)';
+            }
+        }
+
+        // Setup Drag & Drop UI effects
+        const setupDragDrop = (zoneId, inputId) => {
+            const zone = document.getElementById(zoneId);
+            const input = document.getElementById(inputId);
+            if(!zone || !input) return;
+            
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, preventDefaults, false);
+            });
+            function preventDefaults(e) { e.preventDefault(); e.stopPropagation(); }
+            
+            ['dragenter', 'dragover'].forEach(eventName => {
+                zone.addEventListener(eventName, () => zone.classList.add('dragover'), false);
+            });
+            ['dragleave', 'drop'].forEach(eventName => {
+                zone.addEventListener(eventName, () => zone.classList.remove('dragover'), false);
+            });
+            
+            zone.addEventListener('drop', (e) => {
+                let dt = e.dataTransfer;
+                let files = dt.files;
+                input.files = files;
+                // trigger change event manually to update UI
+                const event = new Event('change');
+                input.dispatchEvent(event);
+            }, false);
+        };
+
+        document.addEventListener("DOMContentLoaded", () => {
+            setupDragDrop('deploy-upload-zone', 'up-file');
+            setupDragDrop('update-upload-zone', 'update-file');
+        });
+
+        // Setup Wizard Logic
+        function nextSetupStep(currentStep) {
+            document.getElementById(`setup-step-${currentStep}`).classList.remove('active');
+            document.getElementById(`setup-step-${currentStep + 1}`).classList.add('active');
+        }
+
+        function prevSetupStep(currentStep) {
+            document.getElementById(`setup-step-${currentStep}`).classList.remove('active');
+            document.getElementById(`setup-step-${currentStep - 1}`).classList.add('active');
+        }
+
+        function handleSaveAndDownload() {
+            const newName = document.getElementById('setup-name').value || "SIAM";
+            const newImage = document.getElementById('setup-image').value || "https://i.postimg.cc/t4p3XdPC/IMG-20260706-160439.jpg";
+            const newTiktok = document.getElementById('setup-tiktok').value || "https://tiktok.com/";
+            const newYoutube = document.getElementById('setup-youtube').value || "https://youtube.com/";
+            let fileName = document.getElementById('setup-filename').value || "FFX 4.5";
+            
+            // Basic sanitization
+            fileName = fileName.replace(/[^a-zA-Z0-9 _.-]/g, '').trim() || "FFX 4.5";
+            
+            const btn = document.getElementById('setup-save-btn');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<span class="btn-text"><i class="ti ti-loader-2 ti-spin"></i> Generating...</span>';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                try {
+                    // Clone document to manipulate safely
+                    let clonedDoc = document.documentElement.cloneNode(true);
+                    let setupViewNode = clonedDoc.querySelector('#setup-view');
+                    if (setupViewNode) setupViewNode.remove();
+                    
+                    // Add social links
+                    const setSocialLink = (id, link) => {
+                        const socialBtn = clonedDoc.querySelector(id);
+                        if(socialBtn) socialBtn.setAttribute('onclick', `window.open('${link}', '_blank')`);
+                    };
+                    setSocialLink('#btn-yt-login', newYoutube);
+                    setSocialLink('#btn-tt-login', newTiktok);
+                    setSocialLink('#btn-yt-reg', newYoutube);
+                    setSocialLink('#btn-tt-reg', newTiktok);
+
+                    let htmlContent = "<!DOCTYPE html>\n" + clonedDoc.outerHTML;
+                    
+                    // Replace variables
+                    htmlContent = htmlContent.replace(/const IS_CONFIGURED = true;/g, 'const IS_CONFIGURED = true;');
+                    htmlContent = htmlContent.split('SIAM').join(newName);
+                    htmlContent = htmlContent.split('https://i.postimg.cc/t4p3XdPC/IMG-20260706-160439.jpg').join(newImage);
+
+                    // Create blob and download
+                    const blob = new Blob([htmlContent], { type: 'text/html' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `${fileName}.html`;
+                    document.body.appendChild(a);
+                    a.click();
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                        btn.innerHTML = '<span class="btn-text"><i class="ti ti-check"></i> Downloaded</span>';
+                        
+                        setTimeout(() => {
+                            window.location.href = 'index.html?returnTo=4.5';
+                        }, 1000);
+                    }, 100);
+                    
+                } catch (e) {
+                    console.error("Error generating file", e);
+                    btn.innerHTML = originalHTML;
+                    btn.disabled = false;
+                }
+            }, 500);
+        }
+
+        // Initialize App
+        if (!IS_CONFIGURED) {
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('setup-view').style.display = 'block';
+        } else {
+            checkSession();
+        }
+    </script>
+
+
+</body></html>
