@@ -125,7 +125,9 @@
   },
   "mursalin14x": {
     "password": "7d6c357e2e63d48b8eebe0a03d2fd3cd098b0e6b3da6f92bbd238aa2e1aa9d38",
-    "projects": [],
+    "projects": [
+      "mursalinchowdhury"
+    ],
     "banned": false
   },
   "rohan": {
