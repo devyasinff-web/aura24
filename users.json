@@ -103,5 +103,10 @@
       "xpsbot"
     ],
     "banned": false
+  },
+  "tanvir": {
+    "password": "befc8d65e07ce4ccae256c6117f280ceda4acf7a53522713303693a1167dd808",
+    "projects": [],
+    "banned": false
   }
 }
