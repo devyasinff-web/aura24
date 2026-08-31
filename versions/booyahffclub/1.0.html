@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>BOOYAH FF CLUB</title>
+
+  <!-- Font Awesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body, html { width: 100%; height: 100%; background: #020617; color: #fff; overflow: hidden; }
+
+    /* Royal Blue Cyberpunk Background */
+    #app-loading-screen {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: radial-gradient(circle at 50% 30%, #0f172a 0%, #030712 70%, #020617 100%);
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      z-index: 999999; padding: 20px;
+    }
+
+    /* Blue Glow Logo Wrapper */
+    .brand-logo-wrapper {
+      position: relative; width: 135px; height: 135px; margin-bottom: 25px;
+      display: flex; justify-content: center; align-items: center;
+    }
+    .brand-logo-wrapper::before {
+      content: ''; position: absolute; width: 100%; height: 100%;
+      border-radius: 50%; background: linear-gradient(45deg, #2563eb, #38bdf8);
+      filter: blur(25px); opacity: 0.7; animation: pulseGlow 2.5s ease-in-out infinite alternate;
+    }
+    @keyframes pulseGlow {
+      0% { transform: scale(0.88); opacity: 0.5; }
+      100% { transform: scale(1.18); opacity: 0.9; }
+    }
+
+    .brand-logo-img {
+      position: relative; width: 115px; height: 115px; border-radius: 50%; object-fit: cover;
+      border: 2px solid rgba(56, 189, 248, 0.8); box-shadow: 0 0 30px rgba(37, 99, 235, 0.6);
+    }
+
+    .brand-title {
+      font-family: 'Orbitron', sans-serif; font-size: 28px; font-weight: 900;
+      letter-spacing: 3px; color: #fff;
+      text-shadow: 0 0 12px #38bdf8, 0 0 28px #2563eb, 0 0 45px #1d4ed8;
+      margin-bottom: 30px; text-align: center;
+    }
+
+    /* Modern Blue Loader Spinner */
+    .glow-spinner {
+      width: 50px; height: 50px; border: 3px solid rgba(56, 189, 248, 0.15);
+      border-top: 3px solid #38bdf8; border-right: 3px solid #2563eb;
+      border-radius: 50%; animation: spin 0.8s linear infinite;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.4);
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text {
+      margin-top: 18px; font-size: 13px; color: #38bdf8; letter-spacing: 1.5px; font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .version-tag {
+      position: absolute; bottom: 25px; font-size: 11px; color: #475569;
+      font-family: 'Orbitron', sans-serif; letter-spacing: 1.5px;
+    }
+
+    /* Premium Blue Update Dialog Overlay */
+    #update-modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(2, 6, 23, 0.95); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      display: none; justify-content: center; align-items: center; padding: 20px; z-index: 9999999;
+    }
+
+    .update-card {
+      background: linear-gradient(160deg, #0f172a 0%, #070e20 100%);
+      border: 1px solid rgba(56, 189, 248, 0.35); border-radius: 28px;
+      width: 100%; max-width: 340px; padding: 30px 22px 25px 22px; text-align: center;
+      box-shadow: 0 0 50px rgba(37, 99, 235, 0.35); animation: popup 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative; overflow: hidden;
+    }
+    @keyframes popup { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    .update-icon {
+      width: 75px; height: 75px; background: rgba(37, 99, 235, 0.15); color: #38bdf8;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 32px; margin: 0 auto 18px auto; border: 1px solid rgba(56, 189, 248, 0.4);
+      box-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
+    }
+
+    .update-title { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 800; color: #fff; margin-bottom: 10px; letter-spacing: 1px; }
+    .update-desc { font-size: 12px; color: #94a3b8; margin-bottom: 22px; line-height: 1.6; word-break: break-word; }
+
+    /* Download Progress UI Container */
+    #progress-container {
+      display: none; margin-bottom: 15px; width: 100%;
+    }
+    
+    .progress-bar-bg {
+      width: 100%; height: 10px; background: rgba(255, 255, 255, 0.08);
+      border-radius: 10px; overflow: hidden; border: 1px solid rgba(56, 189, 248, 0.25);
+      margin-bottom: 10px; position: relative;
+    }
+    
+    .progress-bar-fill {
+      width: 0%; height: 100%; background: linear-gradient(90deg, #2563eb, #38bdf8);
+      border-radius: 10px; transition: width 0.3s ease;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.9);
+    }
+
+    .progress-status-text {
+      font-size: 12px; color: #38bdf8; font-weight: 600; display: flex; justify-content: space-between;
+    }
+
+    /* Update Button */
+    .btn-update {
+      width: 100%; padding: 14px; background: linear-gradient(135deg, #2563eb, #0284c7);
+      color: #fff; border: none; border-radius: 14px; font-family: 'Orbitron', sans-serif;
+      font-weight: 700; font-size: 13px; cursor: pointer; letter-spacing: 1px;
+      box-shadow: 0 4px 25px rgba(37, 99, 235, 0.5); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-update:active { transform: scale(0.96); }
+
+    /* Dynamic App Render Host */
+    #app-root { width: 100%; height: 100%; overflow: auto; display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- BOOYAH FF CLUB Splash Screen -->
+  <div id="app-loading-screen">
+    <div class="brand-logo-wrapper">
+      <img src="https://i.ibb.co/9H066q6X/1000441416.png" alt="BOOYAH FF CLUB" class="brand-logo-img" onerror="this.src='https://via.placeholder.com/115/0f172a/38bdf8?text=CM+FF'" />
+    </div>
+    <div class="brand-title">BOOYAH FF CLUB</div>
+    <div class="glow-spinner"></div>
+    <p class="loading-text">Loading app data...</p>
+    <div class="version-tag" id="display-ver-tag">VERSION 1.0</div>
+  </div>
+
+  <!-- Update Available Dialog -->
+  <div id="update-modal-overlay">
+    <div class="update-card">
+      <div class="update-icon" id="modal-icon"><i class="fas fa-rocket"></i></div>
+      <div class="update-title" id="modal-title">UPDATE AVAILABLE</div>
+      <div class="update-desc" id="update-changelog">নতুন আপডেট ও স্পেশাল ফিচার যুক্ত করা হয়েছে। অ্যাপটি স্মুথ ব্যবহার করতে এখনই আপডেট করুন।</div>
+      
+      <!-- Custom Animated Progress Area -->
+      <div id="progress-container">
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+        <div class="progress-status-text">
+          <span id="download-status">Downloading...</span>
+          <span id="download-percent">0%</span>
+        </div>
+      </div>
+
+      <button class="btn-update" id="btn-do-update"><i class="fas fa-download"></i> UPDATE NOW</button>
+    </div>
+  </div>
+
+  <!-- Realtime Dynamic App Root -->
+  <div id="app-root"></div>
+
+  <!-- Firebase & Realtime Sync Module -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAtcqfk2EwwCwEyGWwwOpAR7aJJZGXDADc",
+      authDomain: "admin-panel-e5d4e.firebaseapp.com",
+      databaseURL: "https://admin-panel-e5d4e-default-rtdb.firebaseio.com",
+      projectId: "admin-panel-e5d4e",
+      storageBucket: "admin-panel-e5d4e.firebasestorage.app",
+      messagingSenderId: "1040742002505",
+      appId: "1:1040742002505:web:a9046d2fa5155a17c47498"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    const loader = document.getElementById('app-loading-screen');
+    const updateModal = document.getElementById('update-modal-overlay');
+    const appRoot = document.getElementById('app-root');
+    const verTag = document.getElementById('display-ver-tag');
+
+    // Get Local Stored Code Version
+    let currentLocalVersion = parseInt(localStorage.getItem('booyah_ff_club_app_ver')) || 0;
+    verTag.innerText = "VERSION 1." + currentLocalVersion + ".0.0";
+
+    // Listen to Admin Panel Realtime Updates
+    onValue(ref(db, 'app_code'), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        const serverVersion = parseInt(data.version) || 1;
+        const serverHtml = data.html || '';
+
+        // If new version code found from admin
+        if (serverVersion > currentLocalVersion || !localStorage.getItem('booyah_ff_club_html')) {
+          loader.style.display = 'none';
+          document.getElementById('update-changelog').innerText = data.notes || "নতুন পারফরম্যান্স আপডেট ও ফিচার যুক্ত করা হয়েছে!";
+          updateModal.style.display = 'flex';
+
+          // Click handler for UPDATE NOW (Triggers downloading animation)
+          document.getElementById('btn-do-update').onclick = function() {
+            startUpdateProcess(serverVersion, serverHtml);
+          };
+        } else {
+          // Load Cached Version
+          const cachedCode = localStorage.getItem('booyah_ff_club_html') || serverHtml;
+          renderAppContent(cachedCode);
+          loader.style.display = 'none';
+        }
+      } else {
+        loader.style.display = 'none';
+        appRoot.style.display = 'block';
+        appRoot.innerHTML = "<div style='text-align:center; padding-top:50px; color:#ef4444; font-family:sans-serif;'>No HTML Code Deployed from Admin Panel!</div>";
+      }
+    }, (error) => {
+      console.error("Firebase Read Error:", error);
+      const cachedCode = localStorage.getItem('booyah_ff_club_html');
+      if (cachedCode) {
+        renderAppContent(cachedCode);
+        loader.style.display = 'none';
+      }
+    });
+
+    // Simulated 25-Second Downloading Animation
+    function startUpdateProcess(newVersion, newHtml) {
+      const btn = document.getElementById('btn-do-update');
+      const progressContainer = document.getElementById('progress-container');
+      const fill = document.getElementById('progress-fill');
+      const percentText = document.getElementById('download-percent');
+      const statusText = document.getElementById('download-status');
+      const icon = document.getElementById('modal-icon');
+
+      btn.style.display = 'none';
+      progressContainer.style.display = 'block';
+      icon.innerHTML = '<i class="fas fa-arrows-rotate fa-spin"></i>';
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 2;
+        fill.style.width = progress + '%';
+        percentText.innerText = progress + '%';
+
+        if (progress < 35) {
+          statusText.innerText = "Downloading update package...";
+        } else if (progress < 70) {
+          statusText.innerText = "Verifying update files...";
+        } else if (progress < 95) {
+          statusText.innerText = "Extracting & Installing...";
+        } else {
+          statusText.innerText = "Finalizing update...";
+        }
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          
+          localStorage.setItem('booyah_ff_club_app_ver', newVersion);
+          localStorage.setItem('booyah_ff_club_html', newHtml);
+
+          setTimeout(() => {
+            updateModal.style.display = 'none';
+            renderAppContent(newHtml);
+          }, 600);
+        }
+      }, 250); 
+    }
+
+    // Pure Script & HTML Injection Engine
+    function renderAppContent(htmlContent) {
+      loader.style.display = 'none';
+      appRoot.style.display = 'block';
+      appRoot.innerHTML = '';
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, 'text/html');
+
+      // Execute Head Elements & CSS
+      Array.from(doc.head.children).forEach(node => {
+        if (node.tagName === 'SCRIPT') {
+          execScriptNode(node);
+        } else {
+          document.head.appendChild(node.cloneNode(true));
+        }
+      });
+
+      // Execute Body Elements
+      Array.from(doc.body.childNodes).forEach(node => {
+        if (node.tagName === 'SCRIPT') {
+          execScriptNode(node);
+        } else {
+          appRoot.appendChild(node.cloneNode(true));
+        }
+      });
+    }
+
+    function execScriptNode(oldScript) {
+      const newScript = document.createElement('script');
+      Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+      if (oldScript.innerHTML) {
+        newScript.innerHTML = oldScript.innerHTML;
+      }
+      document.body.appendChild(newScript);
+    }
+  </script>
+</body>
+</html>
