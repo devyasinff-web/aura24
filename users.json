@@ -77,7 +77,9 @@
   },
   "sjsjjsjgmailcom": {
     "password": "8427dd808815e2b06855fbe00c870d8b6448a34972df7764bec2e0ab819d52f3",
-    "projects": [],
+    "projects": [
+      "xpscom"
+    ],
     "banned": false
   },
   "mimi12": {
