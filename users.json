@@ -67,7 +67,9 @@
   },
   "shakikgmailcom": {
     "password": "989dd56df61efc3fe1faa1ce56e4c0e4f4f8ccf6ff108984637eaca2b288de9a",
-    "projects": [],
+    "projects": [
+      "xpscom"
+    ],
     "banned": false
   }
 }
