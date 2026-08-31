@@ -23,9 +23,7 @@
   },
   "aura": {
     "password": "8da8ca224b37a055deb4f2a8036422884fe64c79adf82b432699ebe4b234b972",
-    "projects": [
-      "auraffx"
-    ],
+    "projects": [],
     "banned": false
   }
 }
