@@ -131,7 +131,8 @@
   "rohan": {
     "password": "12fb01109fe4e0ab03e231dbafa0c5228886a8040ba596309687fff0fc61ea26",
     "projects": [
-      "rohan"
+      "rohan",
+      "rohanaura"
     ],
     "banned": false
   }
