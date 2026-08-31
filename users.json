@@ -28,7 +28,9 @@
   },
   "yasin55": {
     "password": "c00d6e1906e0f43fa1c19dfa63d59590fc4112e8d63c5251c00eaed94c9653d0",
-    "projects": [],
+    "projects": [
+      "ffg"
+    ],
     "banned": false
   }
 }
