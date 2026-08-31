@@ -55,9 +55,7 @@
   },
   "sikandar": {
     "password": "5aa9af16983726cc3e0786f2440863f0c3af8d7d7d29fa70b8d4f6ed9a9e8911",
-    "projects": [
-      "sshiks"
-    ],
+    "projects": [],
     "banned": false
   }
 }
