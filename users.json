@@ -97,7 +97,9 @@
   },
   "shakibgmailcom": {
     "password": "2c4dca7c5a34feb03d70447f026e9abb304cf2571e0d98a60cf937e5ff5f1512",
-    "projects": [],
+    "projects": [
+      "xpsbot"
+    ],
     "banned": false
   }
 }
