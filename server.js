@@ -73,25 +73,47 @@ function saveUsers(users) {
 function pushToGitHub(commitMessage) {
     const token = process.env.GITHUB_TOKEN;
     const repo = process.env.GITHUB_REPO;
-    if (!token || !repo) return;
+    
+    if (!token || !repo) {
+        console.error('\n=============================================');
+        console.error('❌ GITHUB SYNC ERROR');
+        console.error('Reason: GITHUB_TOKEN or GITHUB_REPO is missing in Render Environment Variables.');
+        console.error('=============================================\n');
+        return;
+    }
     try {
         const remoteUrl = `https://${token}@github.com/${repo}.git`;
         execSync(`git config user.email "server@render.com"`);
         execSync(`git config user.name "Auto Server"`);
         execSync(`git add sites/ versions/ users.json`);
         const status = execSync('git status --porcelain').toString();
+        
         if (status.length > 0) {
             execSync(`git commit -m "${commitMessage}"`);
-            exec(`git push "${remoteUrl}" HEAD:main`, { env: { ...process.env, GIT_TERMINAL_PROMPT: '0' } }, (error, stdout, stderr) => {
+            
+            // Mask the token in the command for security if it gets logged
+            const safeEnv = { ...process.env, GIT_TERMINAL_PROMPT: '0' };
+            
+            exec(`git push "${remoteUrl}" HEAD:main`, { env: safeEnv }, (error, stdout, stderr) => {
                 if (error) {
-                    console.error('GitHub Push Error:', error.message);
+                    console.error('\n=============================================');
+                    console.error('❌ GITHUB PUSH FAILED');
+                    console.error(`Action: ${commitMessage}`);
+                    console.error('---------------------------------------------');
+                    console.error('ERROR DETAILS (Look here to find the problem):');
+                    console.error(stderr || error.message);
+                    console.error('=============================================\n');
                 } else {
-                    console.log('GitHub Push Success');
+                    console.log(`✅ GitHub Push Success: ${commitMessage}`);
                 }
             });
         }
     } catch (error) {
-        console.error('Failed to save to GitHub:', error.message);
+        console.error('\n=============================================');
+        console.error('❌ GITHUB COMMIT FAILED');
+        console.error('Error Details:');
+        console.error(error.message);
+        console.error('=============================================\n');
     }
 }
 
