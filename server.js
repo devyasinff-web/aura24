@@ -82,7 +82,10 @@ function pushToGitHub(commitMessage) {
         return;
     }
     try {
-        const remoteUrl = `https://${token}@github.com/${repo}.git`;
+        // Extract username from repo (e.g., 'devyasinff-web' from 'devyasinff-web/aura24')
+        const username = repo.split('/')[0];
+        // Fine-grained tokens require the username in the URL
+        const remoteUrl = `https://${username}:${token}@github.com/${repo}.git`;
         execSync(`git config user.email "server@render.com"`);
         execSync(`git config user.name "Auto Server"`);
         execSync(`git add sites/ versions/ users.json`);
