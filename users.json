@@ -174,7 +174,9 @@
   },
   "asif": {
     "password": "73045f1e9258fabebf61e35402e4306ef705decbb08bf4e07ec8b3b73e994c52",
-    "projects": [],
+    "projects": [
+      "aif"
+    ],
     "banned": false
   }
 }
